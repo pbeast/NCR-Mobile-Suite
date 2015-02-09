@@ -28,6 +28,8 @@
 		EC9F217E1A88B8AF00C4450D /* MenuHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EC9F217D1A88B8AF00C4450D /* MenuHeaderView.m */; };
 		EC9F21801A88B8F100C4450D /* MenuHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EC9F217F1A88B8F100C4450D /* MenuHeaderView.xib */; };
 		ECA48B391A7F980400AA0A17 /* MenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = ECA48B381A7F980400AA0A17 /* MenuCell.m */; };
+		ECFE6CA21A896E4A008B749A /* AppIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ECFE6CA11A896E4A008B749A /* AppIcons.xcassets */; };
+		ECFE6CA41A8972B9008B749A /* LaunchImage.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ECFE6CA31A8972B9008B749A /* LaunchImage.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,7 +54,7 @@
 		EC78E9741A8257B4009FDF66 /* libPayPalMPL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPayPalMPL.a; path = "NCR Mobile Suite/3rdParties/PayPal Library/libPayPalMPL.a"; sourceTree = "<group>"; };
 		EC78E9761A825800009FDF66 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		EC78E9781A825806009FDF66 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		EC85EA5D1A790E8A0006CD24 /* NCR Mobile Suite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NCR Mobile Suite.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC85EA5D1A790E8A0006CD24 /* NCR Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NCR Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC85EA611A790E8A0006CD24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC85EA621A790E8A0006CD24 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		EC85EA641A790E8A0006CD24 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -79,6 +81,8 @@
 		EC9F217F1A88B8F100C4450D /* MenuHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MenuHeaderView.xib; sourceTree = "<group>"; };
 		ECA48B371A7F980400AA0A17 /* MenuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuCell.h; sourceTree = "<group>"; };
 		ECA48B381A7F980400AA0A17 /* MenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuCell.m; sourceTree = "<group>"; };
+		ECFE6CA11A896E4A008B749A /* AppIcons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = AppIcons.xcassets; sourceTree = "<group>"; };
+		ECFE6CA31A8972B9008B749A /* LaunchImage.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = LaunchImage.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,7 +148,7 @@
 		EC85EA5E1A790E8A0006CD24 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EC85EA5D1A790E8A0006CD24 /* NCR Mobile Suite.app */,
+				EC85EA5D1A790E8A0006CD24 /* NCR Mobile.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -165,6 +169,8 @@
 				EC85EA601A790E8A0006CD24 /* Supporting Files */,
 				ECA48B361A7F978C00AA0A17 /* Menu */,
 				EC789A731A7D229A0069EFC3 /* Images.xcassets */,
+				ECFE6CA11A896E4A008B749A /* AppIcons.xcassets */,
+				ECFE6CA31A8972B9008B749A /* LaunchImage.xcassets */,
 			);
 			path = "NCR Mobile Suite";
 			sourceTree = "<group>";
@@ -249,7 +255,7 @@
 			);
 			name = "NCR Mobile Suite";
 			productName = "NCR Mobile Suite";
-			productReference = EC85EA5D1A790E8A0006CD24 /* NCR Mobile Suite.app */;
+			productReference = EC85EA5D1A790E8A0006CD24 /* NCR Mobile.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -291,6 +297,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC9F21801A88B8F100C4450D /* MenuHeaderView.xib in Resources */,
+				ECFE6CA21A896E4A008B749A /* AppIcons.xcassets in Resources */,
+				ECFE6CA41A8972B9008B749A /* LaunchImage.xcassets in Resources */,
 				EC789A741A7D229A0069EFC3 /* Images.xcassets in Resources */,
 				EC85EA6C1A790E8A0006CD24 /* Main.storyboard in Resources */,
 				EC85EA711A790E8A0006CD24 /* LaunchScreen.xib in Resources */,
@@ -490,7 +498,7 @@
 					"$(inherited)",
 					"'$(PROJECT_DIR)/NCR Mobile Suite/3rdParties/PayPal Library'",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "NCR Mobile";
 				PROVISIONING_PROFILE = "bfcad417-395e-467a-b0b4-01aa809806ac";
 			};
 			name = Debug;
@@ -522,7 +530,7 @@
 					"$(inherited)",
 					"'$(PROJECT_DIR)/NCR Mobile Suite/3rdParties/PayPal Library'",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "NCR Mobile";
 				PROVISIONING_PROFILE = "bfcad417-395e-467a-b0b4-01aa809806ac";
 			};
 			name = Release;

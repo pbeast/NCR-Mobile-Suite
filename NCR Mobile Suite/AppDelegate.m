@@ -94,6 +94,7 @@
     
     self.dynamicsDrawerViewController.paneDragRequiresScreenEdgePan = YES;
     self.dynamicsDrawerViewController.screenEdgePanCancelsConflictingGestures = YES;
+    
     // Transition to the first view controller
     [menuViewController transitionToViewController:PaneViewControllerTypeReceipts];
 

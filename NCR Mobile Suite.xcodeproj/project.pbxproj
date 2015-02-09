@@ -1,0 +1,554 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CC4F5FEEF2A77FA56E250F47 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 795C829C43DE72E1D7D74227 /* libPods.a */; };
+		EC28B66A1A876C20006573F2 /* libPayPalMPL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EC78E9741A8257B4009FDF66 /* libPayPalMPL.a */; };
+		EC789A5F1A7CF4C10069EFC3 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC789A5E1A7CF4C10069EFC3 /* MenuViewController.m */; };
+		EC789A621A7CF7AA0069EFC3 /* UIColor_Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = EC789A611A7CF7AA0069EFC3 /* UIColor_Utils.m */; };
+		EC789A651A7CF9E50069EFC3 /* SyncViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC789A641A7CF9E50069EFC3 /* SyncViewController.m */; };
+		EC789A6F1A7CFC310069EFC3 /* FullReceiptViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC789A681A7CFC310069EFC3 /* FullReceiptViewController.m */; };
+		EC789A701A7CFC310069EFC3 /* ReceiptsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC789A6A1A7CFC310069EFC3 /* ReceiptsTableViewController.m */; };
+		EC789A711A7CFC310069EFC3 /* ReceiptsTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EC789A6C1A7CFC310069EFC3 /* ReceiptsTableCell.m */; };
+		EC789A721A7CFC310069EFC3 /* ReceiptActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = EC789A6E1A7CFC310069EFC3 /* ReceiptActivityItemProvider.m */; };
+		EC789A741A7D229A0069EFC3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC789A731A7D229A0069EFC3 /* Images.xcassets */; };
+		EC78E9771A825800009FDF66 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EC78E9761A825800009FDF66 /* libxml2.dylib */; };
+		EC78E9791A825806009FDF66 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EC78E9781A825806009FDF66 /* libz.dylib */; };
+		EC85EA631A790E8A0006CD24 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EC85EA621A790E8A0006CD24 /* main.m */; };
+		EC85EA661A790E8A0006CD24 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EC85EA651A790E8A0006CD24 /* AppDelegate.m */; };
+		EC85EA6C1A790E8A0006CD24 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC85EA6A1A790E8A0006CD24 /* Main.storyboard */; };
+		EC85EA711A790E8A0006CD24 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = EC85EA6F1A790E8A0006CD24 /* LaunchScreen.xib */; };
+		EC9F21791A87B0A800C4450D /* JWBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = EC9F216A1A87B0A800C4450D /* JWBlurView.m */; };
+		EC9F217A1A87B0A800C4450D /* UIViewController+ENPopUp.m in Sources */ = {isa = PBXBuildFile; fileRef = EC9F216C1A87B0A800C4450D /* UIViewController+ENPopUp.m */; };
+		EC9F217E1A88B8AF00C4450D /* MenuHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EC9F217D1A88B8AF00C4450D /* MenuHeaderView.m */; };
+		EC9F21801A88B8F100C4450D /* MenuHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EC9F217F1A88B8F100C4450D /* MenuHeaderView.xib */; };
+		ECA48B391A7F980400AA0A17 /* MenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = ECA48B381A7F980400AA0A17 /* MenuCell.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		121C80CE3679B8BAB04040F6 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		795C829C43DE72E1D7D74227 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B20DD7D1000BAD30268E5842 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		EC789A5D1A7CF4C10069EFC3 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuViewController.h; sourceTree = "<group>"; };
+		EC789A5E1A7CF4C10069EFC3 /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuViewController.m; sourceTree = "<group>"; };
+		EC789A601A7CF7AA0069EFC3 /* UIColor_Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColor_Utils.h; sourceTree = "<group>"; };
+		EC789A611A7CF7AA0069EFC3 /* UIColor_Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIColor_Utils.m; sourceTree = "<group>"; };
+		EC789A631A7CF9E50069EFC3 /* SyncViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncViewController.h; sourceTree = "<group>"; };
+		EC789A641A7CF9E50069EFC3 /* SyncViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncViewController.m; sourceTree = "<group>"; };
+		EC789A671A7CFC310069EFC3 /* FullReceiptViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullReceiptViewController.h; sourceTree = "<group>"; };
+		EC789A681A7CFC310069EFC3 /* FullReceiptViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullReceiptViewController.m; sourceTree = "<group>"; };
+		EC789A691A7CFC310069EFC3 /* ReceiptsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReceiptsTableViewController.h; sourceTree = "<group>"; };
+		EC789A6A1A7CFC310069EFC3 /* ReceiptsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReceiptsTableViewController.m; sourceTree = "<group>"; };
+		EC789A6B1A7CFC310069EFC3 /* ReceiptsTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReceiptsTableCell.h; sourceTree = "<group>"; };
+		EC789A6C1A7CFC310069EFC3 /* ReceiptsTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReceiptsTableCell.m; sourceTree = "<group>"; };
+		EC789A6D1A7CFC310069EFC3 /* ReceiptActivityItemProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReceiptActivityItemProvider.h; sourceTree = "<group>"; };
+		EC789A6E1A7CFC310069EFC3 /* ReceiptActivityItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReceiptActivityItemProvider.m; sourceTree = "<group>"; };
+		EC789A731A7D229A0069EFC3 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		EC78E9741A8257B4009FDF66 /* libPayPalMPL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPayPalMPL.a; path = "NCR Mobile Suite/3rdParties/PayPal Library/libPayPalMPL.a"; sourceTree = "<group>"; };
+		EC78E9761A825800009FDF66 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
+		EC78E9781A825806009FDF66 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		EC85EA5D1A790E8A0006CD24 /* NCR Mobile Suite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NCR Mobile Suite.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC85EA611A790E8A0006CD24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EC85EA621A790E8A0006CD24 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		EC85EA641A790E8A0006CD24 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		EC85EA651A790E8A0006CD24 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		EC85EA6B1A790E8A0006CD24 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		EC85EA701A790E8A0006CD24 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		EC9F21691A87B0A800C4450D /* JWBlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JWBlurView.h; sourceTree = "<group>"; };
+		EC9F216A1A87B0A800C4450D /* JWBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JWBlurView.m; sourceTree = "<group>"; };
+		EC9F216B1A87B0A800C4450D /* UIViewController+ENPopUp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+ENPopUp.h"; sourceTree = "<group>"; };
+		EC9F216C1A87B0A800C4450D /* UIViewController+ENPopUp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+ENPopUp.m"; sourceTree = "<group>"; };
+		EC9F216E1A87B0A800C4450D /* libPayPalMPL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libPayPalMPL.a; sourceTree = "<group>"; };
+		EC9F216F1A87B0A800C4450D /* PayPal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PayPal.h; sourceTree = "<group>"; };
+		EC9F21701A87B0A800C4450D /* PayPalAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PayPalAddress.h; sourceTree = "<group>"; };
+		EC9F21711A87B0A800C4450D /* PayPalAdvancedPayment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PayPalAdvancedPayment.h; sourceTree = "<group>"; };
+		EC9F21721A87B0A800C4450D /* PayPalAmounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PayPalAmounts.h; sourceTree = "<group>"; };
+		EC9F21731A87B0A800C4450D /* PayPalInvoiceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PayPalInvoiceData.h; sourceTree = "<group>"; };
+		EC9F21741A87B0A800C4450D /* PayPalInvoiceItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PayPalInvoiceItem.h; sourceTree = "<group>"; };
+		EC9F21751A87B0A800C4450D /* PayPalPayment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PayPalPayment.h; sourceTree = "<group>"; };
+		EC9F21761A87B0A800C4450D /* PayPalPreapprovalDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PayPalPreapprovalDetails.h; sourceTree = "<group>"; };
+		EC9F21771A87B0A800C4450D /* PayPalReceiverAmounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PayPalReceiverAmounts.h; sourceTree = "<group>"; };
+		EC9F21781A87B0A800C4450D /* PayPalReceiverPaymentDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PayPalReceiverPaymentDetails.h; sourceTree = "<group>"; };
+		EC9F217C1A88B8AF00C4450D /* MenuHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuHeaderView.h; sourceTree = "<group>"; };
+		EC9F217D1A88B8AF00C4450D /* MenuHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuHeaderView.m; sourceTree = "<group>"; };
+		EC9F217F1A88B8F100C4450D /* MenuHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MenuHeaderView.xib; sourceTree = "<group>"; };
+		ECA48B371A7F980400AA0A17 /* MenuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuCell.h; sourceTree = "<group>"; };
+		ECA48B381A7F980400AA0A17 /* MenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuCell.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EC85EA5A1A790E8A0006CD24 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC28B66A1A876C20006573F2 /* libPayPalMPL.a in Frameworks */,
+				EC78E9791A825806009FDF66 /* libz.dylib in Frameworks */,
+				EC78E9771A825800009FDF66 /* libxml2.dylib in Frameworks */,
+				CC4F5FEEF2A77FA56E250F47 /* libPods.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		108F4FA26E57515F156E6085 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EC78E9781A825806009FDF66 /* libz.dylib */,
+				EC78E9761A825800009FDF66 /* libxml2.dylib */,
+				EC78E9741A8257B4009FDF66 /* libPayPalMPL.a */,
+				795C829C43DE72E1D7D74227 /* libPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C9F5E3344AD3A9D39D131CA0 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B20DD7D1000BAD30268E5842 /* Pods.debug.xcconfig */,
+				121C80CE3679B8BAB04040F6 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		EC789A661A7CFBEA0069EFC3 /* ReceiptsView */ = {
+			isa = PBXGroup;
+			children = (
+				EC789A671A7CFC310069EFC3 /* FullReceiptViewController.h */,
+				EC789A681A7CFC310069EFC3 /* FullReceiptViewController.m */,
+				EC789A691A7CFC310069EFC3 /* ReceiptsTableViewController.h */,
+				EC789A6A1A7CFC310069EFC3 /* ReceiptsTableViewController.m */,
+				EC789A6B1A7CFC310069EFC3 /* ReceiptsTableCell.h */,
+				EC789A6C1A7CFC310069EFC3 /* ReceiptsTableCell.m */,
+				EC789A6D1A7CFC310069EFC3 /* ReceiptActivityItemProvider.h */,
+				EC789A6E1A7CFC310069EFC3 /* ReceiptActivityItemProvider.m */,
+			);
+			path = ReceiptsView;
+			sourceTree = "<group>";
+		};
+		EC85EA541A790E890006CD24 = {
+			isa = PBXGroup;
+			children = (
+				EC85EA5F1A790E8A0006CD24 /* NCR Mobile Suite */,
+				EC85EA5E1A790E8A0006CD24 /* Products */,
+				C9F5E3344AD3A9D39D131CA0 /* Pods */,
+				108F4FA26E57515F156E6085 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		EC85EA5E1A790E8A0006CD24 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC85EA5D1A790E8A0006CD24 /* NCR Mobile Suite.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EC85EA5F1A790E8A0006CD24 /* NCR Mobile Suite */ = {
+			isa = PBXGroup;
+			children = (
+				EC9F21671A87B0A800C4450D /* 3rdParties */,
+				EC789A661A7CFBEA0069EFC3 /* ReceiptsView */,
+				EC789A631A7CF9E50069EFC3 /* SyncViewController.h */,
+				EC789A641A7CF9E50069EFC3 /* SyncViewController.m */,
+				EC789A601A7CF7AA0069EFC3 /* UIColor_Utils.h */,
+				EC789A611A7CF7AA0069EFC3 /* UIColor_Utils.m */,
+				EC85EA641A790E8A0006CD24 /* AppDelegate.h */,
+				EC85EA651A790E8A0006CD24 /* AppDelegate.m */,
+				EC85EA6A1A790E8A0006CD24 /* Main.storyboard */,
+				EC85EA6F1A790E8A0006CD24 /* LaunchScreen.xib */,
+				EC85EA601A790E8A0006CD24 /* Supporting Files */,
+				ECA48B361A7F978C00AA0A17 /* Menu */,
+				EC789A731A7D229A0069EFC3 /* Images.xcassets */,
+			);
+			path = "NCR Mobile Suite";
+			sourceTree = "<group>";
+		};
+		EC85EA601A790E8A0006CD24 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				EC85EA611A790E8A0006CD24 /* Info.plist */,
+				EC85EA621A790E8A0006CD24 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		EC9F21671A87B0A800C4450D /* 3rdParties */ = {
+			isa = PBXGroup;
+			children = (
+				EC9F21681A87B0A800C4450D /* ENPopUp */,
+				EC9F216D1A87B0A800C4450D /* PayPal Library */,
+			);
+			path = 3rdParties;
+			sourceTree = "<group>";
+		};
+		EC9F21681A87B0A800C4450D /* ENPopUp */ = {
+			isa = PBXGroup;
+			children = (
+				EC9F21691A87B0A800C4450D /* JWBlurView.h */,
+				EC9F216A1A87B0A800C4450D /* JWBlurView.m */,
+				EC9F216B1A87B0A800C4450D /* UIViewController+ENPopUp.h */,
+				EC9F216C1A87B0A800C4450D /* UIViewController+ENPopUp.m */,
+			);
+			path = ENPopUp;
+			sourceTree = "<group>";
+		};
+		EC9F216D1A87B0A800C4450D /* PayPal Library */ = {
+			isa = PBXGroup;
+			children = (
+				EC9F216E1A87B0A800C4450D /* libPayPalMPL.a */,
+				EC9F216F1A87B0A800C4450D /* PayPal.h */,
+				EC9F21701A87B0A800C4450D /* PayPalAddress.h */,
+				EC9F21711A87B0A800C4450D /* PayPalAdvancedPayment.h */,
+				EC9F21721A87B0A800C4450D /* PayPalAmounts.h */,
+				EC9F21731A87B0A800C4450D /* PayPalInvoiceData.h */,
+				EC9F21741A87B0A800C4450D /* PayPalInvoiceItem.h */,
+				EC9F21751A87B0A800C4450D /* PayPalPayment.h */,
+				EC9F21761A87B0A800C4450D /* PayPalPreapprovalDetails.h */,
+				EC9F21771A87B0A800C4450D /* PayPalReceiverAmounts.h */,
+				EC9F21781A87B0A800C4450D /* PayPalReceiverPaymentDetails.h */,
+			);
+			path = "PayPal Library";
+			sourceTree = "<group>";
+		};
+		ECA48B361A7F978C00AA0A17 /* Menu */ = {
+			isa = PBXGroup;
+			children = (
+				EC789A5D1A7CF4C10069EFC3 /* MenuViewController.h */,
+				EC789A5E1A7CF4C10069EFC3 /* MenuViewController.m */,
+				ECA48B371A7F980400AA0A17 /* MenuCell.h */,
+				ECA48B381A7F980400AA0A17 /* MenuCell.m */,
+				EC9F217C1A88B8AF00C4450D /* MenuHeaderView.h */,
+				EC9F217D1A88B8AF00C4450D /* MenuHeaderView.m */,
+				EC9F217F1A88B8F100C4450D /* MenuHeaderView.xib */,
+			);
+			path = Menu;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		EC85EA5C1A790E8A0006CD24 /* NCR Mobile Suite */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC85EA801A790E8A0006CD24 /* Build configuration list for PBXNativeTarget "NCR Mobile Suite" */;
+			buildPhases = (
+				FE8225B9D01C3919C6BD489C /* Check Pods Manifest.lock */,
+				EC85EA591A790E8A0006CD24 /* Sources */,
+				EC85EA5A1A790E8A0006CD24 /* Frameworks */,
+				EC85EA5B1A790E8A0006CD24 /* Resources */,
+				B7706D91F29C6A3D259DD256 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "NCR Mobile Suite";
+			productName = "NCR Mobile Suite";
+			productReference = EC85EA5D1A790E8A0006CD24 /* NCR Mobile Suite.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EC85EA551A790E890006CD24 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = NCR;
+				TargetAttributes = {
+					EC85EA5C1A790E8A0006CD24 = {
+						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = P2WQ65BAA8;
+					};
+				};
+			};
+			buildConfigurationList = EC85EA581A790E890006CD24 /* Build configuration list for PBXProject "NCR Mobile Suite" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EC85EA541A790E890006CD24;
+			productRefGroup = EC85EA5E1A790E8A0006CD24 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EC85EA5C1A790E8A0006CD24 /* NCR Mobile Suite */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EC85EA5B1A790E8A0006CD24 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC9F21801A88B8F100C4450D /* MenuHeaderView.xib in Resources */,
+				EC789A741A7D229A0069EFC3 /* Images.xcassets in Resources */,
+				EC85EA6C1A790E8A0006CD24 /* Main.storyboard in Resources */,
+				EC85EA711A790E8A0006CD24 /* LaunchScreen.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B7706D91F29C6A3D259DD256 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FE8225B9D01C3919C6BD489C /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EC85EA591A790E8A0006CD24 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC9F217A1A87B0A800C4450D /* UIViewController+ENPopUp.m in Sources */,
+				EC789A721A7CFC310069EFC3 /* ReceiptActivityItemProvider.m in Sources */,
+				EC789A651A7CF9E50069EFC3 /* SyncViewController.m in Sources */,
+				EC9F217E1A88B8AF00C4450D /* MenuHeaderView.m in Sources */,
+				EC85EA661A790E8A0006CD24 /* AppDelegate.m in Sources */,
+				EC789A701A7CFC310069EFC3 /* ReceiptsTableViewController.m in Sources */,
+				ECA48B391A7F980400AA0A17 /* MenuCell.m in Sources */,
+				EC9F21791A87B0A800C4450D /* JWBlurView.m in Sources */,
+				EC789A5F1A7CF4C10069EFC3 /* MenuViewController.m in Sources */,
+				EC85EA631A790E8A0006CD24 /* main.m in Sources */,
+				EC789A711A7CFC310069EFC3 /* ReceiptsTableCell.m in Sources */,
+				EC789A6F1A7CFC310069EFC3 /* FullReceiptViewController.m in Sources */,
+				EC789A621A7CF7AA0069EFC3 /* UIColor_Utils.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		EC85EA6A1A790E8A0006CD24 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EC85EA6B1A790E8A0006CD24 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		EC85EA6F1A790E8A0006CD24 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EC85EA701A790E8A0006CD24 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		EC85EA7E1A790E8A0006CD24 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LIBRARY_SEARCH_PATHS = "'$(SRCROOT)/NCR Mobile Suite/3rdParties'/**";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				USER_HEADER_SEARCH_PATHS = "'$(SRCROOT)/NCR Mobile Suite/3rdParties'/**";
+			};
+			name = Debug;
+		};
+		EC85EA7F1A790E8A0006CD24 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LIBRARY_SEARCH_PATHS = "'$(SRCROOT)/NCR Mobile Suite/3rdParties'/**";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				USER_HEADER_SEARCH_PATHS = "'$(SRCROOT)/NCR Mobile Suite/3rdParties'/**";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		EC85EA811A790E8A0006CD24 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B20DD7D1000BAD30268E5842 /* Pods.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Pavel Yankelevich (UCERH6TMLJ)";
+				HEADER_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/Bolts\"",
+					"\"${PODS_ROOT}/Headers/Public/CardIO\"",
+					"\"${PODS_ROOT}/Headers/Public/Facebook-iOS-SDK\"",
+					"\"${PODS_ROOT}/Headers/Public/Facebook-iOS-SDK/FacebookSDK\"",
+					"\"${PODS_ROOT}/Headers/Public/MSDynamicsDrawerViewController\"",
+					"\"${PODS_ROOT}/Headers/Public/Parse\"",
+					"\"${PODS_ROOT}/Headers/Public/ParseFacebookUtils\"",
+					"\"${PODS_ROOT}/Headers/Public/ParseUI\"",
+					"\"${PODS_ROOT}/Headers/Public/SVProgressHUD\"",
+					"\"${PODS_ROOT}/Headers/Public/ZXingObjC\"",
+					"'$(SRCROOT)/NCR Mobile Suite/3rdParties'/**",
+				);
+				INFOPLIST_FILE = "NCR Mobile Suite/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"'$(PROJECT_DIR)/NCR Mobile Suite/3rdParties/PayPal Library'",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "bfcad417-395e-467a-b0b4-01aa809806ac";
+			};
+			name = Debug;
+		};
+		EC85EA821A790E8A0006CD24 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 121C80CE3679B8BAB04040F6 /* Pods.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Pavel Yankelevich (UCERH6TMLJ)";
+				HEADER_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/Bolts\"",
+					"\"${PODS_ROOT}/Headers/Public/CardIO\"",
+					"\"${PODS_ROOT}/Headers/Public/Facebook-iOS-SDK\"",
+					"\"${PODS_ROOT}/Headers/Public/Facebook-iOS-SDK/FacebookSDK\"",
+					"\"${PODS_ROOT}/Headers/Public/MSDynamicsDrawerViewController\"",
+					"\"${PODS_ROOT}/Headers/Public/Parse\"",
+					"\"${PODS_ROOT}/Headers/Public/ParseFacebookUtils\"",
+					"\"${PODS_ROOT}/Headers/Public/ParseUI\"",
+					"\"${PODS_ROOT}/Headers/Public/SVProgressHUD\"",
+					"\"${PODS_ROOT}/Headers/Public/ZXingObjC\"",
+					"'$(SRCROOT)/NCR Mobile Suite/3rdParties'/**",
+				);
+				INFOPLIST_FILE = "NCR Mobile Suite/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"'$(PROJECT_DIR)/NCR Mobile Suite/3rdParties/PayPal Library'",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "bfcad417-395e-467a-b0b4-01aa809806ac";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EC85EA581A790E890006CD24 /* Build configuration list for PBXProject "NCR Mobile Suite" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC85EA7E1A790E8A0006CD24 /* Debug */,
+				EC85EA7F1A790E8A0006CD24 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC85EA801A790E8A0006CD24 /* Build configuration list for PBXNativeTarget "NCR Mobile Suite" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC85EA811A790E8A0006CD24 /* Debug */,
+				EC85EA821A790E8A0006CD24 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = EC85EA551A790E890006CD24 /* Project object */;
+}

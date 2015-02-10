@@ -47,7 +47,7 @@
 {
     [[self avatar] setImage:[UIImage imageNamed:@"anonymous-user"]];
     [[self avatar] setContentMode:UIViewContentModeScaleAspectFit];
-    [[self name] setText:@"Tap here to login..."];
+    [[self name] setText:NSLocalizedString(@"Tap here to login...", @"Tap here to login...")];
 }
 
 -(void)setAvatarImage:(UIImage *)avatarImage

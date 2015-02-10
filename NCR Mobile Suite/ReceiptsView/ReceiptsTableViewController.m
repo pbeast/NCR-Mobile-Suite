@@ -15,7 +15,7 @@
 
 @interface ReceiptsTableViewController ()
 {
-    NSArray* receipts;
+    NSMutableArray* receipts;
     UIRefreshControl *refreshControl;
 }
 @end
@@ -38,14 +38,11 @@
 
     _shouldLoadReceipts = YES;
     
-//    self.tableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
-    self.tableView.rowHeight = 102;
+    self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 90, 0);
+    //self.tableView.rowHeight = 102;
     
     
     [self.refreshControl addTarget:self action:@selector(startRefresh:) forControlEvents:UIControlEventValueChanged];
-    
-//    self.toolbarItems = @[self.editButtonItem];
-//    [self.navigationController setToolbarHidden:NO];
 }
 
 - (void)fillTableFromLocalStorage
@@ -57,7 +54,7 @@
     
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        receipts = [objects copy];
+        receipts = [objects mutableCopy];
         
         [self.refreshControl endRefreshing];
         
@@ -171,6 +168,8 @@
     
     [self formatRefreshControlTitle];
     
+    [self fillTableFromLocalStorage];
+
     [self startRefresh:self];
 }
 
@@ -211,7 +210,10 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
+        [tableView beginUpdates];
+        [receipts removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [tableView endUpdates];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   

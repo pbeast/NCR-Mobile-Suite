@@ -15,6 +15,18 @@
     return [UIColor colorWithHexValue: rgbval];
 }
 
++ (UIColor *) colorWithHexString:(NSString *)hexstr andAlpha:(float)alpha
+{
+    NSScanner *scanner;
+    unsigned int rgbval;
+    
+    scanner = [NSScanner scannerWithString: hexstr];
+    [scanner setCharactersToBeSkipped:[NSCharacterSet characterSetWithCharactersInString:@"#"]];
+    [scanner scanHexInt: &rgbval];
+    
+    return [UIColor colorWithHexValue: rgbval andAlpha:alpha];
+}
+
 // Create a color using a hex RGB value
 // ex. [UIColor colorWithHexValue: 0x03047F]
 + (UIColor *) colorWithHexValue: (NSInteger) rgbValue {
@@ -22,6 +34,15 @@
                            green:((float)((rgbValue & 0xFF00) >> 8))/255.0
                             blue:((float)(rgbValue & 0xFF))/255.0
                            alpha:1.0];
+    
+}
+
++ (UIColor *) colorWithHexValue: (NSInteger) rgbValue  andAlpha:(float)alpha
+{
+    return [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0
+                           green:((float)((rgbValue & 0xFF00) >> 8))/255.0
+                            blue:((float)(rgbValue & 0xFF))/255.0
+                           alpha:alpha];
     
 }
 

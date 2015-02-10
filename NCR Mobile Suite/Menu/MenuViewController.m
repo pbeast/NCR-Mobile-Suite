@@ -172,9 +172,9 @@
         
         CGRect f = self.dynamicsDrawerViewController.view.frame;
         startShoppingButton.frame = CGRectMake(CGRectGetMidX(f) - 40.0, CGRectGetMaxY(f) - 85, 80, 80);
-        startShoppingButton.backgroundColor = [UIColor clearColor];
+        startShoppingButton.backgroundColor = [UIColor colorWithWhite:0 alpha:0.4];
         startShoppingButton.layer.borderColor = [[UIColor blackColor] CGColor];
-        startShoppingButton.layer.borderWidth = 3;
+        startShoppingButton.layer.borderWidth = 0;
         startShoppingButton.layer.cornerRadius = 40;
         
         [startShoppingButton setImage:[UIImage imageNamed:@"shoppingCard"] forState:UIControlStateNormal];

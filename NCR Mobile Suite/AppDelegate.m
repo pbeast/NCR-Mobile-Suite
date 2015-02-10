@@ -47,7 +47,8 @@
     
     [PFImageView class];
     
-    [PFTwitterUtils initializeWithConsumerKey:@"mtRTM5d2lVViR2JJ9ZpC75hXg" consumerSecret:@"6HnMg8YC0b8IZbJdl7VvBDDclw86XbP1EZlPIQfDyovvk0tTmn"];
+//    [PFTwitterUtils initializeWithConsumerKey:@"mtRTM5d2lVViR2JJ9ZpC75hXg" consumerSecret:@"6HnMg8YC0b8IZbJdl7VvBDDclw86XbP1EZlPIQfDyovvk0tTmn"];
+    [PFTwitterUtils initializeWithConsumerKey:@"f6QN6eoNDXA9VOj6mRegsXGlG" consumerSecret:@"xZZUUcy9KaTxJbZL75rhKL7IDGmMK2ItzeNO7EtdSsuIxYX9if"];
     
     [PFFacebookUtils initializeFacebook];
 }
@@ -130,7 +131,7 @@
 - (UIImageView *)windowBackground
 {
     if (!_windowBackground) {
-        UIColor *backColor = [UIColor colorWithHexString:@"#067000"];
+        UIColor *backColor = [UIColor colorWithHexString:@"#067000" ];
         UIImage* back = [UIColor imageWithColor:backColor andSize:[[UIScreen mainScreen] bounds].size];
         _windowBackground = [[UIImageView alloc] initWithImage:back];
     }
@@ -217,33 +218,49 @@
 
 - (void)getSocialData:(PFUser *)user
 {
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    NSString* name = [defaults objectForKey:@"screenName"];
+    if (name != nil)
+        [menuViewController.headerView.name setText:name];
+    
+    NSData* data = [defaults objectForKey:@"avatar"];
+    if (data != nil)
+        [menuViewController.headerView setAvatarImage:[UIImage imageWithData:data]];
+
     if ([PFFacebookUtils isLinkedWithUser:user])
     {
-//        self.navigationItem.title = @"Facebook User";
         FBRequest *request = [FBRequest requestForMe];
         [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
             if (!error) {
-                // result is a dictionary with the user's Facebook data
                 NSDictionary *userData = (NSDictionary *)result;
                 
                 NSString *facebookID = userData[@"id"];
                 
                 NSString *name = userData[@"name"];
                 [menuViewController.headerView.name setText:name];
+                [defaults setObject:name forKey:@"screenName"];
+                [defaults synchronize];
 
-                //self.navigationItem.title = name;
                 /*
                  NSString *location = userData[@"location"][@"name"];
                  NSString *gender = userData[@"gender"];
                  NSString *birthday = userData[@"birthday"];
                  NSString *relationship = userData[@"relationship_status"];
-                 
-                 NSURL *pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", facebookID]];
-                 
                  */
                 
-                NSURL *pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", facebookID]];
-                [menuViewController.headerView setAvatarImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:pictureURL]]];
+                dispatch_queue_t backgroundQueue = dispatch_queue_create("com.mycompany.myqueue", 0);
+                dispatch_async(backgroundQueue, ^{
+
+                    NSURL *pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", facebookID]];
+                    
+                    NSData* imageData = [NSData dataWithContentsOfURL:pictureURL];
+                    [defaults setObject:imageData forKey:@"avatar"];
+                    [defaults synchronize];
+
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [menuViewController.headerView setAvatarImage:[UIImage imageWithData:imageData]];
+                    });
+                });
             }
         }];
     }
@@ -251,20 +268,26 @@
     {
         [self twitterRequest:@"https://api.twitter.com/1.1/account/settings.json" completionHandler:^(NSURLResponse *response, NSDictionary *json, NSError *connectionError)
         {
+            NSString* screenName = [NSString stringWithFormat:@"@%@", json[@"screen_name"] ];
+            [defaults setObject:screenName forKey:@"screenName"];
+            [defaults synchronize];
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                [menuViewController.headerView.name setText:[NSString stringWithFormat:@"@%@", json[@"screen_name"]]];
+                [menuViewController.headerView.name setText:screenName];
             });
             
             NSString *url = [NSString stringWithFormat:@"https://api.twitter.com/1.1/users/show.json?screen_name=%@", json[@"screen_name"]];
             [self twitterRequest:url completionHandler:^(NSURLResponse *response, NSDictionary *data, NSError *connectionError) {
                 NSString *normalSizePicture = data[@"profile_image_url"];
-                normalSizePicture = [normalSizePicture stringByReplacingOccurrencesOfString:@"_normal.jpg" withString:@".jpg"];
+                normalSizePicture = [normalSizePicture stringByReplacingOccurrencesOfString:@"_normal." withString:@"."];
                 NSURL *pictureURL = [NSURL URLWithString:normalSizePicture];
                 dispatch_queue_t backgroundQueue = dispatch_queue_create("com.mycompany.myqueue", 0);
                 dispatch_async(backgroundQueue, ^{
                     NSData* imageData = [NSData dataWithContentsOfURL:pictureURL];
-                    
+
+                    [defaults setObject:imageData forKey:@"avatar"];
+                    [defaults synchronize];
+
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [menuViewController.headerView setAvatarImage:[UIImage imageWithData:imageData]];
                     });
@@ -391,6 +414,11 @@
         
         [menuViewController.headerView reset];
         [menuViewController updateViewController:PaneViewControllerTypeReceipts];
+        
+        NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+        [defaults removeObjectForKey:@"screenName"];
+        [defaults removeObjectForKey:@"avatar"];
+        [defaults synchronize];
 
 //        [receiptsViewController setShouldLoadReceipts:YES];
 //        

@@ -16,6 +16,10 @@
 @interface UIColor (Utils)
 + (UIColor *) colorWithHexString:(NSString *)hex;
 + (UIColor *) colorWithHexValue: (NSInteger) hex;
++ (UIColor *) colorWithHexString:(NSString *)hexstr andAlpha:(float)alpha;
++ (UIColor *) colorWithHexValue: (NSInteger) rgbValue  andAlpha:(float)alpha;
+
+
 + (UIColor *) colorWithRGB: (NSString*) rgb;
 
 + (UIImage *)imageWithColor:(UIColor *)color;

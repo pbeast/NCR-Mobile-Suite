@@ -71,19 +71,28 @@ Parse.Cloud.define("createAssociation", function(request, response) {
 	});
 });
 
-var createReceiptAndSendPush = function(installationId, user, receipt, total, storeAddress, retailer) {
+var createReceiptAndSendPush = function(response, association, receipt, total, storeAddress, retailer) {
 	var receipts = Parse.Object.extend("Receipts");
-	var receipt = new receipts();
+	var receiptObj = new receipts();
 
-	receipt.save({
+	var installationId = association.get("installationId");
+
+	receiptObj.save(
+	{
 		"installationId": installationId,
-		"user": user,
+		"user": association.get("user"),
 		"receipt": receipt,
 		"total": total,
 		"storeAddress": storeAddress,
 		"retailer": retailer
-	}, {
-		success: function(receipt) {
+	}, 
+	{
+		success: function(receipt) 
+		{
+			console.log("Receipt stored successful");
+
+			association.destroy();
+
 			var query = new Parse.Query(Parse.Installation);
 			query.equalTo('installationId', installationId);
 			Parse.Push.send({
@@ -94,18 +103,21 @@ var createReceiptAndSendPush = function(installationId, user, receipt, total, st
 					badge: "1",
 					pushReason: 0 //New Receipt
 				}
-			}, {
+			}, 
+			{
 				success: function() {
 					console.log("Push was successful");
+					response.success("Receipt published successfully; Push was successful");
 				},
 				error: function(error) {
 					console.log("Push was unsuccessful: " + error.message);
+					response.success("Receipt published successfully; Push was unsuccessful: " + error.message);
 				}
 			});
-			response.success("Receipt published successfully");
 		},
-		error: function(receipt, error) {
-			response.error('Failed to create new object, with error code: ' + error.message);
+		error: function(receipt, error) 
+		{
+			response.error('Failed to create new receipt, with error code: ' + error.message);
 		}
 	});
 }
@@ -139,17 +151,24 @@ Parse.Cloud.define("publishReceipt", function(request, response) {
 	var Retailer = Parse.Object.extend("Retailer");
 	var retailerQuery = new Parse.Query(Retailer);
 	retailerQuery.get(request.params.retailerId, {
-		success: function(retailer) {
+		success: function(retailer) 
+		{
+			console.log("Found retailer");
+
 			var associationQuery = new Parse.Query("associationMap");
 
-			var syncCode = parseInt(request.params.pinCode, 10)
-			associationQuery.equalTo("syncCode", pinCode);
+			var syncCode = parseInt(request.params.syncCode, 10)
+			associationQuery.equalTo("syncCode", syncCode);
+			associationQuery.descending("createdAt");
 
 			associationQuery.first({
-				success: function(association) {
-					createReceiptAndSendPush(
-						association.get("installationId"),
-						association.get("user"),
+				success: function(association) 
+				{
+					console.log("Found association");
+
+					var r = createReceiptAndSendPush(
+						response,
+						association,
 						request.params.receipt,
 						request.params.total,
 						request.params.storeAddress,
@@ -157,7 +176,7 @@ Parse.Cloud.define("publishReceipt", function(request, response) {
 					);
 				},
 				error: function(error) {
-					response.error("Failed to publish receipt. Error=" + error.message);
+					response.error("Failed to find association. Error=" + error.message);
 				}
 			});
 		},
@@ -306,7 +325,6 @@ Parse.Cloud.define("fetchReceiptsByUser", function(request, response) {
 		receiptsQuery.greaterThan("createdAt", request.params.lastFetchTime);
 	receiptsQuery.equalTo('user', request.user);
 	receiptsQuery.include("retailer");
-	receiptsQuery.equalTo("state", 1);
 	receiptsQuery.descending("createdAt");
 
 	receiptsQuery.find({

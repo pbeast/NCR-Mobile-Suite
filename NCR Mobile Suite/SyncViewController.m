@@ -23,18 +23,18 @@
 
 @implementation SyncViewController
 
-- (void)registerReceipt {
+- (void)createNewAssociation {
     
     [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeNone];
     
     PFInstallation* installation = [PFInstallation currentInstallation];
     
-    [PFCloud callFunctionInBackground:@"registerReceipt"
+    [PFCloud callFunctionInBackground:@"createAssociation"
                        withParameters:@{@"installationId" : [installation installationId]}
                                 block:^(NSString *result, NSError *error) {
                                     if (!error) {
-                                        PFObject* object = (PFObject*)result;
-                                        NSNumber* pinCode = object[@"pinCode"];
+                                        NSDictionary* responce = (NSDictionary*)result;
+                                        NSNumber* pinCode = responce[@"syncCode"];
                                         
                                         NSError *error = nil;
                                         ZXMultiFormatWriter *writer = [ZXMultiFormatWriter writer];
@@ -87,12 +87,12 @@
 -(void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
 {
     if (motion == UIEventSubtypeMotionShake){
-        [self registerReceipt];
+        [self createNewAssociation];
     }
 }
 
 -(IBAction)startRefresh:(id)sender{
-    [self registerReceipt];
+    [self createNewAssociation];
 }
 
 -(BOOL)canBecomeFirstResponder{
@@ -101,7 +101,7 @@
 
 -(IBAction)actions:(id)sender
 {
-    [self registerReceipt];
+    [self createNewAssociation];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -125,7 +125,7 @@
     
     if (shouldCreateNewReceipt){
         shouldCreateNewReceipt = NO;
-        [self registerReceipt];
+        [self createNewAssociation];
     }
 }
 

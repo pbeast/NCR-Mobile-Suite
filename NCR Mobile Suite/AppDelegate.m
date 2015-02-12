@@ -38,7 +38,7 @@
     [Parse enableLocalDatastore];
     
     //Prod
-    [Parse setApplicationId:@"GI0onNPgipudQrPflEVJJBQz83Ms9GuuaUXzIawS" clientKey:@"r1ch0MW8clfboCMxFSIkZqsxv8wPTXiU8f1LWAVd"];
+    [Parse setApplicationId:@"8fi9V1TROEXHlMDH9TfsT7Tg2DSYZa68fKwjXHS3" clientKey:@"G3sQxvaYqaZ3ScxXeIC7ti6IvAo2CWWyA79mtXr0"];
     
     //Dev
     //[Parse setApplicationId:@"SNGu8bRK5nxTwGTh3qrvDzFE8tRbIarDGaRsKxwr" clientKey:@"W3CAAQRO4Xq2TqtDtvRgZKtYaQLrGIZsPnbOKCwp"];
@@ -47,7 +47,6 @@
     
     [PFImageView class];
     
-//    [PFTwitterUtils initializeWithConsumerKey:@"mtRTM5d2lVViR2JJ9ZpC75hXg" consumerSecret:@"6HnMg8YC0b8IZbJdl7VvBDDclw86XbP1EZlPIQfDyovvk0tTmn"];
     [PFTwitterUtils initializeWithConsumerKey:@"f6QN6eoNDXA9VOj6mRegsXGlG" consumerSecret:@"xZZUUcy9KaTxJbZL75rhKL7IDGmMK2ItzeNO7EtdSsuIxYX9if"];
     
     [PFFacebookUtils initializeFacebook];
@@ -55,6 +54,10 @@
 
 -(void)prepareForPush:(UIApplication *)application
 {
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if ([currentInstallation objectId] == nil)
+        [currentInstallation saveInBackground];
+
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
     if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
         UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
@@ -97,7 +100,7 @@
     self.dynamicsDrawerViewController.screenEdgePanCancelsConflictingGestures = YES;
     
     // Transition to the first view controller
-    [menuViewController transitionToViewController:PaneViewControllerTypeReceipts];
+    [menuViewController transitionToViewController:PaneViewControllerTypeShoppingHistory];
 
 //    [self.dynamicsDrawerViewController setPaneState:MSDynamicsDrawerPaneStateOpen inDirection:MSDynamicsDrawerDirectionRight];
     
@@ -115,12 +118,7 @@
         if (userInfo != nil)
         {
             NSLog(@"Launched from push notification: %@", userInfo);
-            
-            //            int *pinCode = [[userInfo objectForKey:@"pinCode"] intValue];
-            
-//            UINavigationController* navController = (UINavigationController*)  self.window.rootViewController;
-//            HostViewController* hostViewController = (HostViewController*)  [navController.viewControllers firstObject];
-//            [hostViewController setShouldStartFromReceiptView:YES];
+            [menuViewController transitionToViewController:PaneViewControllerTypeShoppingHistory];
         }
     }
 
@@ -310,11 +308,9 @@
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"lastFetchTime"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    [menuViewController updateViewController:PaneViewControllerTypeReceipts];
-//    [syncViewController performSelector:@selector(startRefresh:) withObject:self];
-//    [receiptsViewController setShouldLoadReceipts:YES];
+    [menuViewController updateViewController:PaneViewControllerTypeShoppingHistory];
     
-    [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
+    //[SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
     
     PFInstallation* installation = [PFInstallation currentInstallation];
     
@@ -326,17 +322,9 @@
          else
              NSLog(@"Failed associate instalation with user");
          
-         [SVProgressHUD dismiss];
+         //[SVProgressHUD dismiss];
      }];
-    
-    
-    //    PFInstallation *installation = [PFInstallation currentInstallation];
-    //    installation[@"user"] = [PFUser currentUser];
-    //    [installation saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-    //        NSLog(@"Installation was associated with user");
-    //        [SVProgressHUD dismiss];
-    //
-    //    }];
+
 }
 
 -(void)logInViewController:(PFLogInViewController *)logInController didFailToLogInWithError:(NSError *)error{
@@ -347,16 +335,14 @@
 {
     [self.dynamicsDrawerViewController dismissViewControllerAnimated:YES completion:nil];
     
-//    self.navigationItem.title = user.username;
-//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"exit"] style:UIBarButtonItemStylePlain target:self action:@selector(login:)];
+    [self getSocialData:user];
     
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"lastFetchTime"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-//    [syncViewController performSelector:@selector(startRefresh:) withObject:self];
-    [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
-    
-//    [receiptsViewController setShouldLoadReceipts:YES];
+    [menuViewController updateViewController:PaneViewControllerTypeShoppingHistory];
+
+    //[SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
     
     PFInstallation *installation = [PFInstallation currentInstallation];
     [PFCloud callFunctionInBackground:@"associateInstallationWithUser" withParameters:@{@"installationId" : [installation installationId]} block:^(NSString *result, NSError *error)
@@ -369,13 +355,6 @@
          
          [SVProgressHUD dismiss];
      }];
-    
-    //    installation[@"user"] = [PFUser currentUser];
-    //    [installation saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-    //        NSLog(@"Installation was associated with user");
-    //
-    //        [SVProgressHUD dismiss];
-    //    }];
 }
 
 - (void)logInViewControllerDidCancelLogIn:(PFLogInViewController *)logInController {
@@ -413,20 +392,12 @@
         [PFUser logOut];
         
         [menuViewController.headerView reset];
-        [menuViewController updateViewController:PaneViewControllerTypeReceipts];
         
         NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
         [defaults removeObjectForKey:@"screenName"];
         [defaults removeObjectForKey:@"avatar"];
+        [defaults removeObjectForKey:@"lastFetchTime"];
         [defaults synchronize];
-
-//        [receiptsViewController setShouldLoadReceipts:YES];
-//        
-//        self.navigationItem.title = @"Anonymous";
-//        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"enter"] style:UIBarButtonItemStylePlain target:self action:@selector(login:)];
-        
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"lastFetchTime"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
         
         PFQuery *query = [PFQuery queryWithClassName:@"Receipts"];
         [query fromLocalDatastore];
@@ -435,16 +406,19 @@
          {
              [PFObject unpinAllInBackground:objects block:^(BOOL succeeded, NSError *error) {
                  
+                 [menuViewController updateViewController:PaneViewControllerTypeShoppingHistory];
+
                  PFInstallation *installation = [PFInstallation currentInstallation];
-                 [installation removeObjectForKey:@"user"];
-                 [installation saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                     NSLog(@"User unassociated with installation");
-                     
-                     [SVProgressHUD dismiss];
-                     
-//                     [syncViewController performSelector:@selector(startRefresh:) withObject:self];
-//                     [receiptsViewController performSelector:@selector(startRefresh:) withObject:self];
-                 }];
+                 [PFCloud callFunctionInBackground:@"unAssociateInstallationWithUser" withParameters:@{@"installationId" : [installation installationId]} block:^(NSString *result, NSError *error)
+                  {
+                      if (!error) {
+                          NSLog(@"Installation was un-associated with user");
+                      }
+                      else
+                          NSLog(@"Failed to un-associate instalation with user");
+                      
+                      [SVProgressHUD dismiss];
+                  }];
              }];
          }];
     }
@@ -454,7 +428,9 @@
 
 - (void)paymentSuccessWithKey:(NSString *)payKey andStatus:(PayPalPaymentStatus)paymentStatus
 {
-    
+    if (paymentStatus == STATUS_COMPLETED){
+        
+    }
 }
 - (void)paymentFailedWithCorrelationID:(NSString *)correlationID
 {
@@ -478,13 +454,18 @@
                                         if ([ack compare:@"Success" options:NSCaseInsensitiveSearch] == NSOrderedSame){
                                             NSString* preapprovalKey = response[@"preapprovalKey"];
                                             [[PayPal getPayPalInst] setDelegate:self];
-                                            [[PayPal getPayPalInst] preapprovalWithKey:preapprovalKey andMerchantName:@"NCR Corp."];
+                                            [[PayPal getPayPalInst] preapprovalWithKey:preapprovalKey andMerchantName:@"NCR Mobile Suite"];
                                         }
                                         else{
                                             NSString* message = response[@"error"][0][@"message"];
                                             UIAlertView* av = [[UIAlertView alloc] initWithTitle:@"NCR Mobile Suite" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                                             [av show];
                                         }
+                                    }
+                                    else{
+                                        NSString* message = [error userInfo][@"error"];
+                                        UIAlertView* av = [[UIAlertView alloc] initWithTitle:@"NCR Mobile Suite" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                        [av show];
                                     }
                                 }];
 }
@@ -510,10 +491,8 @@
 
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-//    UINavigationController* navController = (UINavigationController*)  self.window.rootViewController;
-//    HostViewController* hostViewController = (HostViewController*)  [navController.viewControllers firstObject];
-//    
-//    [hostViewController newTicketWithPinCode:[[userInfo objectForKey:@"pinCode"] intValue]];
+    [menuViewController transitionToViewController:PaneViewControllerTypeShoppingHistory];
+    [menuViewController updateViewController:PaneViewControllerTypeShoppingHistory];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

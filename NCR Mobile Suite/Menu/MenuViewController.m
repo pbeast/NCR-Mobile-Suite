@@ -86,20 +86,20 @@
     self.paneViewControllerType = NSUIntegerMax;
     
     self.paneViewControllerTitles = @{
-                                      @(PaneViewControllerTypeReceipts) : @"Shopping History",
+                                      @(PaneViewControllerTypeShoppingHistory) : @"Shopping History",
                                       @(PaneViewControllerTypeShoppingLists) : @"Shopping Lists",
                                       @(PaneViewControllerTypeAddPayPal) : @"Connect to PayPal",
                                       @(PaneViewControllerTypeLoyalty) : @"Loyalty",
                                       };
     self.paneViewControllerIcons = @{
-                                      @(PaneViewControllerTypeReceipts) : @"receipt",
+                                      @(PaneViewControllerTypeShoppingHistory) : @"receipt",
                                       @(PaneViewControllerTypeShoppingLists) : @"shopping_list",
                                       @(PaneViewControllerTypeAddPayPal) : @"PayPalLogo",
                                       @(PaneViewControllerTypeLoyalty) : @"loyalty-cards"
                                       };
     
     self.paneViewControllerIdentifiers = @{
-                                           @(PaneViewControllerTypeReceipts) : @"ReceiptsTableViewController"
+                                           @(PaneViewControllerTypeShoppingHistory) : @"ReceiptsTableViewController"
                                            };
     
     self.paneViewControllerInstances = [NSMutableDictionary new];

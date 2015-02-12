@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "NCR Mobile Suite": {
+            "applicationId": "8fi9V1TROEXHlMDH9TfsT7Tg2DSYZa68fKwjXHS3", 
+            "masterKey": "bBRrpr8657GvamKSmwHIA2ZzcGSnz1pXPuU4jzPu"
+        }, 
+        "_default": {
+            "link": "NCR Mobile Suite"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.3.2"
+    }
+}

@@ -11,7 +11,7 @@
 #import "MenuHeaderView.h"
 
 typedef NS_ENUM(NSUInteger, PaneViewControllerType) {
-    PaneViewControllerTypeReceipts,
+    PaneViewControllerTypeShoppingHistory,
     PaneViewControllerTypeShoppingLists,
     PaneViewControllerTypeAddPayPal,
     PaneViewControllerTypeLoyalty,

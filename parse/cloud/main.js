@@ -72,23 +72,20 @@ Parse.Cloud.define("createAssociation", function(request, response) {
 });
 
 var createReceiptAndSendPush = function(response, association, receipt, total, storeAddress, retailer) {
-	var receipts = Parse.Object.extend("Receipts");
-	var receiptObj = new receipts();
+	var Receipts = Parse.Object.extend("Receipts");
+	var receipt = new Receipts();
 
 	var installationId = association.get("installationId");
 
-	receiptObj.save(
-	{
+	receipt.save({
 		"installationId": installationId,
 		"user": association.get("user"),
 		"receipt": receipt,
 		"total": total,
 		"storeAddress": storeAddress,
 		"retailer": retailer
-	}, 
-	{
-		success: function(receipt) 
-		{
+	}, {
+		success: function(receipt) {
 			console.log("Receipt stored successful");
 
 			association.destroy();
@@ -103,8 +100,7 @@ var createReceiptAndSendPush = function(response, association, receipt, total, s
 					badge: "1",
 					pushReason: 0 //New Receipt
 				}
-			}, 
-			{
+			}, {
 				success: function() {
 					console.log("Push was successful");
 					response.success("Receipt published successfully; Push was successful");
@@ -115,8 +111,7 @@ var createReceiptAndSendPush = function(response, association, receipt, total, s
 				}
 			});
 		},
-		error: function(receipt, error) 
-		{
+		error: function(receipt, error) {
 			response.error('Failed to create new receipt, with error code: ' + error.message);
 		}
 	});
@@ -151,8 +146,7 @@ Parse.Cloud.define("publishReceipt", function(request, response) {
 	var Retailer = Parse.Object.extend("Retailer");
 	var retailerQuery = new Parse.Query(Retailer);
 	retailerQuery.get(request.params.retailerId, {
-		success: function(retailer) 
-		{
+		success: function(retailer) {
 			console.log("Found retailer");
 
 			var associationQuery = new Parse.Query("associationMap");
@@ -162,8 +156,7 @@ Parse.Cloud.define("publishReceipt", function(request, response) {
 			associationQuery.descending("createdAt");
 
 			associationQuery.first({
-				success: function(association) 
-				{
+				success: function(association) {
 					console.log("Found association");
 
 					var r = createReceiptAndSendPush(
@@ -391,6 +384,33 @@ Parse.Cloud.define("fetchReceiptsByUser", function(request, response) {
 	*/
 });
 
+Parse.Cloud.define("confirmPayPalPreapprovalKey", function(request, response) {
+	if (request.user == undefined) {
+		response.error("You have to login first");
+		return
+	}
+	var paymentMethodQuery = new Parse.Query("PaymentMethod");
+	paymentMethodQuery.equalTo("user", request.user);
+	paymentMethodQuery.equalTo("type", 0); //PayPal
+	paymentMethodQuery.first({
+		success: function(paymentMethod) {
+			if (paymentMethod == undefined) {
+				response.error("Payment method not found");
+			} else {
+				var connectionData = paymentMethod.get("connectionData");
+				connectionData["confirmed"] = true;
+
+				paymentMethod.set("connectionData", connectionData);
+				paymentMethod.save();
+				response.success();
+			}
+		},
+		error: function(error) {
+			console.log("Failed to update Payment Method: " + error.message);
+			response.error("Failed to update Payment Method: " + error.message);
+		}
+	});
+});
 
 Parse.Cloud.define("getPayPalPreapprovalKey", function(request, response) {
 	var moment = require('moment');
@@ -402,7 +422,6 @@ Parse.Cloud.define("getPayPalPreapprovalKey", function(request, response) {
 
 	var now = moment();
 	var futureDate = now.add('y', 1);
-
 
 	Parse.Cloud.httpRequest({
 		method: 'POST',
@@ -426,7 +445,50 @@ Parse.Cloud.define("getPayPalPreapprovalKey", function(request, response) {
 			'pinType': 'REQUIRED'
 		},
 		success: function(httpResponse) {
-			response.success(httpResponse.data);
+			if (httpResponse.data["responseEnvelope"]["ack"] == "Success") {
+
+				var paymentMethodQuery = new Parse.Query("PaymentMethod");
+				paymentMethodQuery.equalTo("user", request.user);
+				paymentMethodQuery.equalTo("type", 0); //PayPal
+				paymentMethodQuery.first({
+					success: function(paymentMethod) {
+						if (paymentMethod == undefined) {
+							var PaymentMethod = Parse.Object.extend("PaymentMethod");
+							var paymentMethod = new PaymentMethod();
+
+							paymentMethod.save({
+								"user": request.user,
+								"type": 0, //PayPal
+								"connectionData": {
+									preapprovalKey: httpResponse.data["preapprovalKey"],
+									confirmed: false
+								}
+							}, {
+								success: function(pm) {
+									response.success(httpResponse.data);
+								},
+
+								error: function(error) {
+									console.log("Failed to set Payment Method: " + error.message);
+									response.error("Failed to set Payment Method: " + error.message);
+								}
+							});
+						} else {
+							paymentMethod.set("connectionData", {
+								preapprovalKey: httpResponse.data["preapprovalKey"],
+								confirmed: false
+							});
+							paymentMethod.save();
+							response.success(httpResponse.data);
+						}
+					},
+					error: function(error) {
+						console.log("Failed to set Payment Method: " + error.message);
+						response.error("Failed to set Payment Method: " + error.message);
+					}
+				});
+			} else
+				response.success(httpResponse.data);
 		},
 		error: function(httpResponse) {
 			response.error('Request failed with response code ' + httpResponse.status);

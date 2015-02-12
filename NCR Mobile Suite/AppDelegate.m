@@ -429,7 +429,21 @@
 - (void)paymentSuccessWithKey:(NSString *)payKey andStatus:(PayPalPaymentStatus)paymentStatus
 {
     if (paymentStatus == STATUS_COMPLETED){
-        
+        [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
+        [PFCloud callFunctionInBackground:@"confirmPayPalPreapprovalKey"
+                           withParameters:@{}
+                                    block:^(NSString *result, NSError *error) {
+                                        [SVProgressHUD dismiss];
+                                        if (!error) {
+                                            UIAlertView* av = [[UIAlertView alloc] initWithTitle:@"NCR Mobile Suite" message:@"Now you can pay with PayPal!!!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                            [av show];
+                                        }
+                                        else{
+                                            NSString* message = [error userInfo][@"error"];
+                                            UIAlertView* av = [[UIAlertView alloc] initWithTitle:@"NCR Mobile Suite" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                            [av show];
+                                        }
+                                    }];
     }
 }
 - (void)paymentFailedWithCorrelationID:(NSString *)correlationID

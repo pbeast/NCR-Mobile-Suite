@@ -1,3 +1,4 @@
+//Test change by Michalich
 Parse.Cloud.job("cleanAssociations", function(request, status) {
 	var moment = require('moment');
 

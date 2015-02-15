@@ -11,6 +11,8 @@
 #import "AppDelegate.h"
 #import "UIColor_Utils.h"
 #import "UIViewController+ENPopUp.h"
+#import "Parse/Parse.h"
+#import "SVProgressHUD.h"
 
 @interface MenuViewController ()<MenuHeaderViewDelegate>
 {
@@ -88,13 +90,13 @@
     self.paneViewControllerTitles = @{
                                       @(PaneViewControllerTypeShoppingHistory) : @"Shopping History",
                                       @(PaneViewControllerTypeShoppingLists) : @"Shopping Lists",
-                                      @(PaneViewControllerTypeAddPayPal) : @"Connect to PayPal",
+                                      @(PaneViewControllerTypePayPal) : @"Connect to PayPal",
                                       @(PaneViewControllerTypeLoyalty) : @"Loyalty",
                                       };
     self.paneViewControllerIcons = @{
                                       @(PaneViewControllerTypeShoppingHistory) : @"receipt",
                                       @(PaneViewControllerTypeShoppingLists) : @"shopping_list",
-                                      @(PaneViewControllerTypeAddPayPal) : @"PayPalLogo",
+                                      @(PaneViewControllerTypePayPal) : @"PayPalLogo",
                                       @(PaneViewControllerTypeLoyalty) : @"loyalty-cards"
                                       };
     
@@ -265,7 +267,15 @@
     
     PaneViewControllerType controllerType = [self paneViewControllerTypeForIndexPath:indexPath];
     
-    [[cell title] setText:self.paneViewControllerTitles[@(controllerType)]];
+    if (controllerType == PaneViewControllerTypePayPal){
+        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"PayPalConnected"] isEqual: @(YES)]){
+            [[cell title] setText:@"PayPal Connected"];
+        }
+        else
+            [[cell title] setText:self.paneViewControllerTitles[@(controllerType)]];
+    }
+    else
+        [[cell title] setText:self.paneViewControllerTitles[@(controllerType)]];
     [[cell image] setImage:[UIImage imageNamed:self.paneViewControllerIcons[@(controllerType)]]];
     
     return cell;
@@ -275,10 +285,45 @@
 {
     PaneViewControllerType paneViewControllerType = [self paneViewControllerTypeForIndexPath:indexPath];
     
-    if (paneViewControllerType == PaneViewControllerTypeAddPayPal){
+    if (paneViewControllerType == PaneViewControllerTypePayPal){
         [self.dynamicsDrawerViewController setPaneState:MSDynamicsDrawerPaneStateClosed animated:YES allowUserInterruption:YES completion:nil];
         AppDelegate* delegate = (AppDelegate*)self.dynamicsDrawerViewController.delegate;
-        [delegate connectPayPal];
+        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"PayPalConnected"] isEqual: @(YES)]){
+            UIAlertController* ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:@"PayPal already connected. Disconnect?" preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Disconnect" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
+
+                [PFCloud callFunctionInBackground:@"removePayPalConnection" withParameters:@{} block:^(NSDictionary *result, NSError *error)
+                 {
+                     [SVProgressHUD dismiss];
+                     
+                     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"PayPalConnected"];
+                     [[NSUserDefaults standardUserDefaults] synchronize];
+                     
+                     [[self tableView] reloadData];
+                 }];
+            }];
+            
+            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+            
+            [ac addAction:okAction];
+            [ac addAction:cancelAction];
+            
+            [self.dynamicsDrawerViewController presentViewController:ac animated:YES completion:^{
+                
+            }];
+        }
+        else{
+            PFUser *currentUser = [PFUser currentUser];
+            if (currentUser == nil)
+            {
+                UIAlertView* av = [[UIAlertView alloc] initWithTitle:@"NCR Mobile Suite" message:@"You have to login first" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [av show];
+            }
+            else
+                [delegate connectPayPal];
+        }
     }
 //    else if (paneViewControllerType == PaneViewControllerTypeLoginLogout){
 //        [self.dynamicsDrawerViewController setPaneState:MSDynamicsDrawerPaneStateClosed animated:YES allowUserInterruption:YES completion:nil];

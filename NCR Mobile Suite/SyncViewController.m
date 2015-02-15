@@ -31,10 +31,9 @@
     
     [PFCloud callFunctionInBackground:@"createAssociation"
                        withParameters:@{@"installationId" : [installation installationId]}
-                                block:^(NSString *result, NSError *error) {
+                                block:^(NSDictionary *parseResult, NSError *error) {
                                     if (!error) {
-                                        NSDictionary* responce = (NSDictionary*)result;
-                                        NSNumber* pinCode = responce[@"syncCode"];
+                                        NSNumber* pinCode = parseResult[@"data"];
                                         
                                         NSError *error = nil;
                                         ZXMultiFormatWriter *writer = [ZXMultiFormatWriter writer];

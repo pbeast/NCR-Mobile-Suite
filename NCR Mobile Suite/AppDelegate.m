@@ -432,11 +432,15 @@
         [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
         [PFCloud callFunctionInBackground:@"confirmPayPalPreapprovalKey"
                            withParameters:@{}
-                                    block:^(NSString *result, NSError *error) {
+                                    block:^(NSDictionary *result, NSError *error) {
                                         [SVProgressHUD dismiss];
                                         if (!error) {
+                                            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"PayPalConnected"];
+                                            
                                             UIAlertView* av = [[UIAlertView alloc] initWithTitle:@"NCR Mobile Suite" message:@"Now you can pay with PayPal!!!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                                             [av show];
+                                            
+                                            [[menuViewController tableView] reloadData];
                                         }
                                         else{
                                             NSString* message = [error userInfo][@"error"];
@@ -460,10 +464,10 @@
     [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
     [PFCloud callFunctionInBackground:@"getPayPalPreapprovalKey"
                        withParameters:@{}
-                                block:^(NSString *result, NSError *error) {
+                                block:^(NSDictionary*result, NSError *error) {
                                     [SVProgressHUD dismiss];
                                     if (!error) {
-                                        NSDictionary* response = (NSDictionary*)result;
+                                        NSDictionary* response = result[@"data"];
                                         NSString *ack = response[@"responseEnvelope"][@"ack"];
                                         if ([ack compare:@"Success" options:NSCaseInsensitiveSearch] == NSOrderedSame){
                                             NSString* preapprovalKey = response[@"preapprovalKey"];
@@ -477,7 +481,7 @@
                                         }
                                     }
                                     else{
-                                        NSString* message = [error userInfo][@"error"];
+                                        NSString* message = [error userInfo][@"error"][@"message"];
                                         UIAlertView* av = [[UIAlertView alloc] initWithTitle:@"NCR Mobile Suite" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                                         [av show];
                                     }

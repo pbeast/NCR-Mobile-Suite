@@ -64,54 +64,51 @@
     }];
 }
 
-- (void)processReceiptsFetchData:(NSObject *)result error:(NSError *)error
+- (void)processReceiptsFetchData:(NSDictionary *)result error:(NSError *)error
 {
     if (!error)
     {
-        if ([result isKindOfClass:[NSArray class]])
-        {
-            NSArray* fetchedReceipts = (NSArray *)result;
-            NSMutableArray *uniqueRetailers = [NSMutableArray new];
+        NSArray* fetchedReceipts = result[@"data"];
+        if ([fetchedReceipts count] == 0){
+            [self.refreshControl endRefreshing];
+            return;
+        }
+        
+        NSMutableArray *uniqueRetailers = [NSMutableArray new];
+        
+        for (PFObject* receipt in fetchedReceipts) {
+            PFObject* retailer = receipt[@"retailer"];
+            NSString* retailerId = [retailer objectId];
+            if ([uniqueRetailers containsObject:retailerId])
+                continue;
             
-            for (PFObject* receipt in fetchedReceipts) {
-                PFObject* retailer = receipt[@"retailer"];
-                NSString* retailerId = [retailer objectId];
-                if ([uniqueRetailers containsObject:retailerId])
-                    continue;
+            [uniqueRetailers addObject:retailerId];
+            [retailer pin];
+        }
+        
+        [PFObject pinAllInBackground:fetchedReceipts block:^(BOOL succeeded, NSError *error) {
+            if (succeeded){
                 
-                [uniqueRetailers addObject:retailerId];
-                [retailer pin];
+                PFObject* lastReceipt = [fetchedReceipts firstObject];
+                
+                NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+                NSDate* lastReceiptCreatedAt = [lastReceipt createdAt];
+                
+                [defaults setObject:lastReceiptCreatedAt forKey:@"lastFetchTime"];
+                [defaults synchronize];
+                
+                [self formatRefreshControlTitle];
             }
-            
-            [PFObject pinAllInBackground:fetchedReceipts block:^(BOOL succeeded, NSError *error) {
-                if (succeeded){
-                    
-                    PFObject* lastReceipt = [fetchedReceipts firstObject];
-                    
-                    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-                    NSDate* lastReceiptCreatedAt = [lastReceipt createdAt];
-                    
-                    [defaults setObject:lastReceiptCreatedAt forKey:@"lastFetchTime"];
-                    [defaults synchronize];
-                    
-                    [self formatRefreshControlTitle];
-                }
 
-                [self fillTableFromLocalStorage];
-                
-                return;
-            }];
-        }
-        else{
-            receipts = nil;
             [self fillTableFromLocalStorage];
-        }
+            
+            return;
+        }];
     }
-    else{
-        receipts = nil;
-        [self fillTableFromLocalStorage];
-    }
-    
+//    else{
+//        receipts = nil;
+//        [self fillTableFromLocalStorage];
+//    }
 }
 
 -(IBAction)startRefresh:(id)sender
@@ -122,17 +119,17 @@
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSDate* lastFetchTime = [defaults objectForKey:@"lastFetchTime"];
 
-    if ([PFUser currentUser])
-    {
-        [PFCloud callFunctionInBackground:@"fetchReceiptsByUser" withParameters:@{ @"lastFetchTime" : (lastFetchTime == nil ? @"" : lastFetchTime) } block:^(NSObject *result, NSError *error)
-         {
-             [self processReceiptsFetchData:result error:error];
-         }];
-        
-        return;
-    }
+//    if ([PFUser currentUser])
+//    {
+//        [PFCloud callFunctionInBackground:@"fetchReceiptsByUser" withParameters:@{ @"lastFetchTime" : (lastFetchTime == nil ? @"" : lastFetchTime) } block:^(NSObject *result, NSError *error)
+//         {
+//             [self processReceiptsFetchData:result error:error];
+//         }];
+//        
+//        return;
+//    }
     
-    [PFCloud callFunctionInBackground:@"fetchReceiptsByInstallationId" withParameters:@{ @"installationId" : [[PFInstallation currentInstallation] installationId], @"lastFetchTime" : (lastFetchTime == nil ? @"" : lastFetchTime) } block:^(NSObject *result, NSError *error)
+    [PFCloud callFunctionInBackground:@"fetchReceipts" withParameters:@{ @"installationId" : [[PFInstallation currentInstallation] installationId], @"lastFetchTime" : (lastFetchTime == nil ? @"" : lastFetchTime) } block:^(NSDictionary *result, NSError *error)
      {
          [self processReceiptsFetchData:result error:error];
      }];

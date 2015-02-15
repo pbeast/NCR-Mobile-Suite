@@ -13,7 +13,7 @@
 typedef NS_ENUM(NSUInteger, PaneViewControllerType) {
     PaneViewControllerTypeShoppingHistory,
     PaneViewControllerTypeShoppingLists,
-    PaneViewControllerTypeAddPayPal,
+    PaneViewControllerTypePayPal,
     PaneViewControllerTypeLoyalty,
     PaneViewControllerTypeCount
 };

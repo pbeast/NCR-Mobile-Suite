@@ -1,6 +1,3 @@
-// tortise test
-
-//Test change by Michalich
 Parse.Cloud.job("cleanAssociations", function(request, status) {
 	var moment = require('moment');
 
@@ -22,10 +19,19 @@ Parse.Cloud.job("cleanAssociations", function(request, status) {
 	});
 });
 
+var failureResponce = function(messageText){
+	return {status : 0, message : messageText};
+}
+
+var successResponce = function(messageText, responseData){
+	return {status : 1, message : messageText, data : responseData };
+}
+
+
 Parse.Cloud.define("createAssociation", function(request, response) {
 
 	if (request.params.installationId == undefined) {
-		response.error("installationId is mandatory parameter");
+		response.error(failureResponce("installationId is mandatory parameter"));
 		return
 	}
 
@@ -52,29 +58,27 @@ Parse.Cloud.define("createAssociation", function(request, response) {
 						"user": request.user
 					}, {
 						success: function(association) {
-							response.success({
-								syncCode: sequenceObject.get("sequence")
-							});
+							response.success(successResponce("OK", sequenceObject.get("sequence")));
 						},
 						error: function(association, error) {
-							response.error('Failed to create new object, with error code: ' + error.message);
+							response.error(failureResponce('Failed to create new object, with error: ' + error.message));
 						}
 					});
 				},
 				error: function(error) {
 					console.log(error);
-					response.error(error);
+					response.error(failureResponce('Failed to save counter, with error: ' + error.message));
 				}
 			});
 		},
 		error: function(error) {
 			console.log(error);
-			response.error(error);
+			response.error(failureResponce('Failed to retrieve counter, with error: ' + error.message));
 		}
 	});
 });
 
-var createReceiptAndSendPush = function(response, association, receipt, total, storeAddress, retailer) {
+var createReceiptAndSendPush = function(response, association, receiptText, total, storeAddress, retailer) {
 	var Receipts = Parse.Object.extend("Receipts");
 	var receipt = new Receipts();
 
@@ -83,7 +87,7 @@ var createReceiptAndSendPush = function(response, association, receipt, total, s
 	receipt.save({
 		"installationId": installationId,
 		"user": association.get("user"),
-		"receipt": receipt,
+		"receipt": receiptText,
 		"total": total,
 		"storeAddress": storeAddress,
 		"retailer": retailer
@@ -106,44 +110,49 @@ var createReceiptAndSendPush = function(response, association, receipt, total, s
 			}, {
 				success: function() {
 					console.log("Push was successful");
-					response.success("Receipt published successfully; Push was successful");
+					response.success(successResponce("Receipt published successfully; Push was successful", null));
 				},
 				error: function(error) {
 					console.log("Push was unsuccessful: " + error.message);
-					response.success("Receipt published successfully; Push was unsuccessful: " + error.message);
+					response.success(
+					{
+						status : 2,
+						message : "Receipt published successfully; Push was unsuccessful: " + error.message,
+						data : null
+					});
 				}
 			});
 		},
 		error: function(receipt, error) {
-			response.error('Failed to create new receipt, with error code: ' + error.message);
+			response.error(failureResponce('Failed to create new receipt, with error code: ' + error.message));
 		}
 	});
 }
 
 Parse.Cloud.define("publishReceipt", function(request, response) {
 	if (request.params.syncCode == undefined) {
-		response.error("pinCode is mandatory parameter");
-		return
+		response.error(failureResponce("pinCode is mandatory parameter"));
+		return;
 	}
 
 	if (request.params.receipt == undefined) {
-		response.error("receipt is mandatory parameter");
-		return
+		response.error(failureResponce("receipt is mandatory parameter"));
+		return;
 	}
 
 	if (request.params.total == undefined) {
-		response.error("total is mandatory parameter");
-		return
+		response.error(failureResponce("total is mandatory parameter"));
+		return;
 	}
 
 	if (request.params.retailerId == undefined) {
-		response.error("retailerId is mandatory parameter");
-		return
+		response.error(failureResponce("retailerId is mandatory parameter"));
+		return;
 	}
 
 	if (request.params.storeAddress == undefined) {
-		response.error("storeAddress is mandatory parameter");
-		return
+		response.error(failureResponce("storeAddress is mandatory parameter"));
+		return;
 	}
 
 	var Retailer = Parse.Object.extend("Retailer");
@@ -172,41 +181,12 @@ Parse.Cloud.define("publishReceipt", function(request, response) {
 					);
 				},
 				error: function(error) {
-					response.error("Failed to find association. Error=" + error.message);
+					response.error(failureResponce("Failed to find association. Error=" + error.message));
 				}
 			});
 		},
 		error: function() {
-			response.error("Retailer not found. Error=" + error.message);
-		}
-	});
-});
-
-
-Parse.Cloud.define("fetchReceiptByPinCode", function(request, response) {
-	if (request.params.pinCode == undefined) {
-		response.error("pinCode is mandatory parameter");
-		return
-	}
-
-	var pinCode = parseInt(request.params.pinCode, 10);
-	console.log("pinCode: " + pinCode);
-	// return;
-
-	var receiptsQuery = new Parse.Query("Receipts");
-
-	receiptsQuery.equalTo("pinCode", pinCode);
-	receiptsQuery.first({
-		success: function(result) {
-			if (result.get("state") != 1) {
-				response.error("receipt still not published");
-				return;
-			}
-
-			response.success(result.get("receipt"));
-		},
-		error: function() {
-			response.error("receipt lookup failed");
+			response.error(failureResponce("Retailer not found. Error=" + error.message));
 		}
 	});
 });
@@ -226,22 +206,22 @@ Parse.Cloud.define("unAssociateInstallationWithUser", function(request, response
 			object.unset('user');
 			object.save();
 
-			response.success("");
+			response.success(successResponce("success", null));
 		},
 		error: function(error) {
-			response.error("installation lookup failed:" + error.message);
+			response.error(failureResponce("installation lookup failed:" + error.message));
 		}
 	});
 });
 
 Parse.Cloud.define("associateInstallationWithUser", function(request, response) {
 	if (request.params.installationId == undefined) {
-		response.error("installationId is mandatory parameter");
+		response.error(failureResponce("installationId is mandatory parameter"));
 		return
 	}
 
 	if (request.user == undefined) {
-		response.error("no logged-in user");
+		response.error(failureResponce("no logged-in user"));
 		return
 	}
 
@@ -261,57 +241,19 @@ Parse.Cloud.define("associateInstallationWithUser", function(request, response) 
 				receipt.set('user', request.user);
 				receipt.save();
 			}).then(function() {
-					response.success("");
+					response.success(successResponce("OK", null));
 				},
 				function(error) {
-					response.error("receipts lookup failed:" + error.message);
+					response.error(failureResponce("receipts lookup failed:" + error.message));
 				});
 		},
 		error: function(error) {
-			response.error("receipts lookup failed:" + error.message);
+			response.error(failureResponce("receipts lookup failed:" + error.message));
 		}
 	});
 });
 
-Parse.Cloud.define("fetchReceiptsByInstallationId", function(request, response) {
-	if (request.params.installationId == undefined) {
-		response.error("installationId is mandatory parameter");
-		return
-	}
-
-	console.log(request.params.lastFetchTime);
-
-	var receiptsQuery = new Parse.Query("Receipts");
-
-	receiptsQuery.equalTo("installationId", request.params.installationId);
-	receiptsQuery.equalTo("user", null);
-
-	if (request.params.lastFetchTime != "" && request.params.lastFetchTime != undefined)
-		receiptsQuery.greaterThan("createdAt", request.params.lastFetchTime);
-
-	receiptsQuery.include("retailer");
-	receiptsQuery.equalTo("state", 1);
-	receiptsQuery.descending("createdAt");
-
-	receiptsQuery.find({
-		success: function(results) {
-			if (results.length == 0) {
-				response.success("No data");
-				return;
-			}
-
-			response.success(results);
-		},
-		error: function(error) {
-			response.error("receipts lookup failed:" + error.message);
-		}
-	});
-});
-
-Parse.Cloud.define("fetchReceiptsByUser", function(request, response) {
-
-	Parse.Cloud.useMasterKey();
-
+Parse.Cloud.define("fetchReceipts", function(request, response) {
 	console.log(request.user);
 	console.log(request.params.lastFetchTime);
 
@@ -319,72 +261,33 @@ Parse.Cloud.define("fetchReceiptsByUser", function(request, response) {
 	var receiptsQuery = new Parse.Query("Receipts");
 	if (request.params.lastFetchTime != "" && request.params.lastFetchTime != undefined)
 		receiptsQuery.greaterThan("createdAt", request.params.lastFetchTime);
-	receiptsQuery.equalTo('user', request.user);
+
+	if (request.user == undefined) {
+		receiptsQuery.equalTo("installationId", request.params.installationId);
+		receiptsQuery.equalTo("user", null);
+		console.log('will search by installationId');
+	}
+	else{
+		receiptsQuery.equalTo('user', request.user);
+		console.log('will search by user');
+	}
+
 	receiptsQuery.include("retailer");
 	receiptsQuery.descending("createdAt");
 
 	receiptsQuery.find({
 		success: function(results) {
 			if (results.length == 0) {
-				response.success("No receipts found for user");
+				response.success(successResponce("No receipts found for user", []));
 				return;
 			}
 
-			response.success(results);
+			response.success(successResponce("found " + results.length + " receipts", results));
 		},
 		error: function(error) {
-			response.error("receipts lookup failed:" + error.message);
+			response.error(failureResponce("receipts lookup failed:" + error.message));
 		}
 	});
-
-
-	/*
-		var installationsQuery = new Parse.Query(Parse.Installation);
-		installationsQuery.equalTo('user', request.user); 
-		installationsQuery.select("installationId");
-		installationsQuery.find({
-			success: function(userInstallations) {
-		    	if (userInstallations.length == 0){
-					response.error("No installations for user");
-					return;
-		    	}
-
-		    	//console.log(userInstallations);
-
-				var receiptsQuery = new Parse.Query("Receipts");
-				if (request.params.lastFetchTime != "" && request.params.lastFetchTime != undefined)
-					receiptsQuery.greaterThan("createdAt", request.params.lastFetchTime);
-				var installationIds = [];
-				for (var i = 0; i < userInstallations.length; i++) { 
-					installationIds.push(userInstallations[i].get("installationId"));
-	    		}
-
-				console.log(installationIds);
-
-				receiptsQuery.containedIn("installationId", installationIds);
-				receiptsQuery.include("retailer");
-				receiptsQuery.equalTo("state", 1);
-				receiptsQuery.descending("createdAt");
-
-				receiptsQuery.find({
-				    success: function(results) {
-				    	if (results.length == 0){
-							response.success("No receipts found for user");
-							return;
-				    	}
-
-				   	    response.success(results);
-			       	},
-				    error: function(error) {
-				        response.error("receipts lookup failed:" + error.message);
-				    }
-				});
-	       	},
-		    error: function(error) {
-		        response.error("User installations lookup failed:" + error.message);
-		    }
-		});
-	*/
 });
 
 Parse.Cloud.define("confirmPayPalPreapprovalKey", function(request, response) {
@@ -398,19 +301,40 @@ Parse.Cloud.define("confirmPayPalPreapprovalKey", function(request, response) {
 	paymentMethodQuery.first({
 		success: function(paymentMethod) {
 			if (paymentMethod == undefined) {
-				response.error("Payment method not found");
+				response.error(failureResponce("Payment method not found"));
 			} else {
 				var connectionData = paymentMethod.get("connectionData");
 				connectionData["confirmed"] = true;
 
 				paymentMethod.set("connectionData", connectionData);
 				paymentMethod.save();
-				response.success();
+				response.success(successResponce("", null));
 			}
 		},
 		error: function(error) {
 			console.log("Failed to update Payment Method: " + error.message);
-			response.error("Failed to update Payment Method: " + error.message);
+			response.error(failureResponce("Failed to update Payment Method: " + error.message));
+		}
+	});
+});
+
+Parse.Cloud.define("removePayPalConnection", function(request, response) {
+
+	if (request.user == undefined) {
+		response.error("You have to login first");
+		return
+	}
+	var paymentMethodQuery = new Parse.Query("PaymentMethod");
+	paymentMethodQuery.equalTo("user", request.user);
+	paymentMethodQuery.equalTo("type", 0); //PayPal
+	paymentMethodQuery.first({
+		success: function(paymentMethod) {
+			paymentMethod.destroy();
+			response.success(successResponce("PayPal connection removed", null));
+		},
+		error: function(error) {
+			console.log("Failed to update Payment Method: " + error.message);
+			response.error(failureResponce("Failed to update Payment Method: " + error.message));
 		}
 	});
 });
@@ -468,12 +392,12 @@ Parse.Cloud.define("getPayPalPreapprovalKey", function(request, response) {
 								}
 							}, {
 								success: function(pm) {
-									response.success(httpResponse.data);
+									response.success(successResponce("Preapproval retrieved successfully", httpResponse.data));
 								},
 
 								error: function(error) {
 									console.log("Failed to set Payment Method: " + error.message);
-									response.error("Failed to set Payment Method: " + error.message);
+									response.error(failureResponce("Failed to set Payment Method: " + error.message));
 								}
 							});
 						} else {
@@ -482,19 +406,19 @@ Parse.Cloud.define("getPayPalPreapprovalKey", function(request, response) {
 								confirmed: false
 							});
 							paymentMethod.save();
-							response.success(httpResponse.data);
+							response.success(successResponce("Preapproval retrieved successfully", httpResponse.data));
 						}
 					},
 					error: function(error) {
 						console.log("Failed to set Payment Method: " + error.message);
-						response.error("Failed to set Payment Method: " + error.message);
+						response.error(failureResponce("Failed to set Payment Method: " + error.message));
 					}
 				});
 			} else
-				response.success(httpResponse.data);
+				response.success(successResponce("Preapproval retrieved successfully", httpResponse.data));
 		},
 		error: function(httpResponse) {
-			response.error('Request failed with response code ' + httpResponse.status);
+			response.error(failureResponce('Request failed with response code ' + httpResponse.status))	;
 		}
 	});
 });

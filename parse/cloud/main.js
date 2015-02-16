@@ -1,3 +1,4 @@
+
 Parse.Cloud.job("cleanAssociations", function(request, status) {
 	var moment = require('moment');
 
@@ -422,3 +423,127 @@ Parse.Cloud.define("getPayPalPreapprovalKey", function(request, response) {
 		}
 	});
 });
+
+
+Parse.Cloud.define("requestPayment", function(request, response) {
+	if (request.params.syncCode == undefined) {
+		response.error(failureResponce("pinCode is mandatory parameter"));
+		return;
+	}
+	
+	if (request.params.total == undefined) {
+		response.error(failureResponce("total is mandatory parameter"));
+		return;
+	}
+
+	if (request.params.currencySymbol == undefined) {
+		response.error(failureResponce("currencySymbol is mandatory parameter"));
+		return;
+	}
+
+	if (request.params.retailerId == undefined) {
+		response.error(failureResponce("retailerId is mandatory parameter"));
+		return;
+	}
+
+	if (request.params.storeAddress == undefined) {
+		response.error(failureResponce("storeAddress is mandatory parameter"));
+		return;
+	}
+
+	if (request.params.callBackUrl == undefined) {
+		response.error(failureResponce("callBackUrl is mandatory parameter"));
+		return;
+	}
+
+
+
+	var Retailer = Parse.Object.extend("Retailer");
+	var retailerQuery = new Parse.Query(Retailer);
+	retailerQuery.get(request.params.retailerId, {
+		success: function(retailer) {
+			console.log("Found retailer");
+
+			var associationQuery = new Parse.Query("associationMap");
+
+			var syncCode = parseInt(request.params.syncCode, 10)
+			associationQuery.equalTo("syncCode", syncCode);
+			associationQuery.descending("createdAt");
+
+			associationQuery.first({
+				success: function(association) {
+					console.log("Found association");
+
+					var r = createPaymentAndSendPush(
+						response,
+						association,
+						request.params.currencySymbol,
+						request.params.total,
+						request.params.storeAddress,
+						retailer,
+						request.params.callBackUrl
+					);
+				},
+				error: function(error) {
+					response.error(failureResponce("Failed to find association. Error=" + error.message));
+				}
+			});
+		},
+		error: function() {
+			response.error(failureResponce("Retailer not found. Error=" + error.message));
+		}
+	});
+});
+
+var createPaymentAndSendPush = function(response, association, currencySymbol, total, storeAddress, retailer, callBackUrl) {
+	var Payment = Parse.Object.extend("Payment");
+	var payment = new Payment();
+
+	var installationId = association.get("installationId");
+
+	payment.save({
+		"installationId": installationId,
+		"user": association.get("user"),
+		"currencySymbol": currencySymbol,
+		"total": total,
+		"storeAddress": storeAddress,
+		"retailer": retailer,
+		"callBackUrl":callBackUrl,
+		"status":1  //creataed
+	}, {
+		success: function(payment) {
+			console.log("Payment stored successful");
+
+		//	association.destroy();
+
+			var query = new Parse.Query(Parse.Installation);
+			query.equalTo('installationId', installationId);
+			Parse.Push.send({
+				where: query,
+				data: {
+					alert: "New Payment is ready",
+					title: "NCR Mobile Suite",
+					badge: "1",
+					pushReason: 1 //New Payment
+				}
+			}, {
+				success: function() {
+					console.log("Push  for payment was successful");
+					response.success(successResponce("Payment created successfully; Push was successful", null));
+				},
+				error: function(error) {
+					console.log("Push for payment was unsuccessful: " + error.message);
+					response.success(
+					{
+						status : 2,
+						message : "Payment published successfully; Push was unsuccessful: " + error.message,
+						data : null
+					});
+				}
+			});
+		},
+		error: function(receipt, error) {
+			response.error(failureResponce('Failed to create new receipt, with error code: ' + error.message));
+		}
+	});
+}

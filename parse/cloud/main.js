@@ -194,7 +194,7 @@ Parse.Cloud.define("publishReceipt", function(request, response) {
 
 Parse.Cloud.define("unAssociateInstallationWithUser", function(request, response) {
 	if (request.params.installationId == undefined) {
-		response.error("installationId is mandatory parameter");
+		response.error(failureResponce("installationId is mandatory parameter"));
 		return
 	}
 
@@ -293,7 +293,7 @@ Parse.Cloud.define("fetchReceipts", function(request, response) {
 
 Parse.Cloud.define("confirmPayPalPreapprovalKey", function(request, response) {
 	if (request.user == undefined) {
-		response.error("You have to login first");
+		response.error(failureResponce("You have to login first"));
 		return
 	}
 	var paymentMethodQuery = new Parse.Query("PaymentMethod");
@@ -322,7 +322,7 @@ Parse.Cloud.define("confirmPayPalPreapprovalKey", function(request, response) {
 Parse.Cloud.define("removePayPalConnection", function(request, response) {
 
 	if (request.user == undefined) {
-		response.error("You have to login first");
+		response.error(failureResponce("You have to login first"));
 		return
 	}
 	var paymentMethodQuery = new Parse.Query("PaymentMethod");
@@ -344,7 +344,7 @@ Parse.Cloud.define("getPayPalPreapprovalKey", function(request, response) {
 	var moment = require('moment');
 
 	if (request.user == undefined) {
-		response.error("You have to login first");
+		response.error(failureResponce( "You have to login first"));
 		return
 	}
 
@@ -509,7 +509,7 @@ var createPaymentAndSendPush = function(response, association, currencySymbol, t
 		"storeAddress": storeAddress,
 		"retailer": retailer,
 		"callBackUrl":callBackUrl,
-		"status":1  //creataed
+		"status":0  //creataed
 	}, {
 		success: function(payment) {
 			console.log("Payment stored successful");
@@ -524,7 +524,8 @@ var createPaymentAndSendPush = function(response, association, currencySymbol, t
 					alert: "New Payment is ready",
 					title: "NCR Mobile Suite",
 					badge: "1",
-					pushReason: 1 //New Payment
+					pushReason: 1, //New Payment
+					paymentId:payment.get("objectId")
 				}
 			}, {
 				success: function() {
@@ -543,7 +544,158 @@ var createPaymentAndSendPush = function(response, association, currencySymbol, t
 			});
 		},
 		error: function(receipt, error) {
-			response.error(failureResponce('Failed to create new receipt, with error code: ' + error.message));
+			response.error(failureResponce('Failed to create new payment, with error code: ' + error.message));
 		}
 	});
 }
+
+
+Parse.Cloud.define("getPaymentById", function(request, response) {
+	console.log(request.user);
+	
+   if (request.user == undefined) {
+		response.error(failureResponce("You have to login first"));
+		return
+	}
+
+	if (request.paymentId == undefined) {
+		response.error(failureResponce("No Payment Id"));
+		return
+	}
+
+    var Payment = Parse.Object.extend("Payment");
+	var payment = new Parse.Query(Payment);
+	payment.get(request.paymentId, {
+		success: function(object) {
+			
+			if (object.get('status') != 0)
+				{
+					response.error(failureResponce('Requested payment is incorrect status ' + object.get('status')));
+				}
+
+			response.success(successResponce("Payment found " , object));
+	
+		},
+		error: function(error) {
+			console.log(error);
+			response.error(failureResponce('Failed to retrieve payment data, with error: ' + error.message));
+		}
+	});
+});
+
+/*
+Parse.Cloud.define("payWithPayPal", function(request, response) {
+	var moment = require('moment');
+    if (request.user == undefined) {
+		response.error(failureResponce("You have to login first"));
+		return
+	}
+
+	if (request.paymentId == undefined) {
+		response.error(failureResponce("No Payment Id"));
+		return
+	}
+
+    var Payment = Parse.Object.extend("Payment");
+	var payment = new Parse.Query(Payment);
+	payment.get(request.paymentId, {
+		success: function(object) {
+			
+			if (object.get('status') != 0)
+				{
+					response.error(failureResponce('Requested payment is incorrect status ' + object.get('status')));
+				}
+
+			//response.success(successResponce("Payment found " , object));
+
+ var now = moment();
+	var futureDate = now.add('y', 1);
+
+	Parse.Cloud.httpRequest({
+		method: 'POST',
+		url: ' https://svcs.sandbox.paypal.com/AdaptivePayments/Pay',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'X-PAYPAL-SECURITY-USERID': 'pavel.yankelevich-facilitator_api1.ncr.com',
+			'X-PAYPAL-SECURITY-PASSWORD': 'U5WF37CSX9WSPCXP',
+			'X-PAYPAL-SECURITY-SIGNATURE': 'AFcWxV21C7fd0v3bYYYRCpSSRl31A84oshmk-KxnmMfYmt3yw-ylVlcA',
+			'X-PAYPAL-REQUEST-DATA-FORMAT': 'NV',
+			'X-PAYPAL-RESPONSE-DATA-FORMAT': 'JSON',
+			'X-PAYPAL-APPLICATION-ID': 'APP-80W284485P519543T'
+		},
+		body: {
+			'returnUrl': 'http://www.yourdomain.com/success.html',
+			'cancelUrl': 'http://www.yourdomain.com/cancel.html',
+			'startingDate': now.format('YYYY-MM-DD'),
+			'endingDate': futureDate.format('YYYY-MM-DD'),
+			'currencyCode': 'USD',
+			'requestEnvelope.errorLanguage': 'en_US',
+			'pinType': 'REQUIRED'
+		},
+		success: function(httpResponse) {
+			if (httpResponse.data["responseEnvelope"]["ack"] == "Success") {
+
+				var paymentMethodQuery = new Parse.Query("PaymentMethod");
+				paymentMethodQuery.equalTo("user", request.user);
+				paymentMethodQuery.equalTo("type", 0); //PayPal
+				paymentMethodQuery.first({
+					success: function(paymentMethod) {
+						if (paymentMethod == undefined) {
+							var PaymentMethod = Parse.Object.extend("PaymentMethod");
+							var paymentMethod = new PaymentMethod();
+
+							paymentMethod.save({
+								"user": request.user,
+								"type": 0, //PayPal
+								"connectionData": {
+									preapprovalKey: httpResponse.data["preapprovalKey"],
+									confirmed: false
+								}
+							}, {
+								success: function(pm) {
+									response.success(successResponce("Preapproval retrieved successfully", httpResponse.data));
+								},
+
+								error: function(error) {
+									console.log("Failed to set Payment Method: " + error.message);
+									response.error(failureResponce("Failed to set Payment Method: " + error.message));
+								}
+							});
+						} else {
+							paymentMethod.set("connectionData", {
+								preapprovalKey: httpResponse.data["preapprovalKey"],
+								confirmed: false
+							});
+							paymentMethod.save();
+							response.success(successResponce("Preapproval retrieved successfully", httpResponse.data));
+						}
+					},
+					error: function(error) {
+						console.log("Failed to set Payment Method: " + error.message);
+						response.error(failureResponce("Failed to set Payment Method: " + error.message));
+					}
+				});
+			} else
+				response.success(successResponce("Preapproval retrieved successfully", httpResponse.data));
+		},
+		error: function(httpResponse) {
+			response.error(failureResponce('Request failed with response code ' + httpResponse.status))	;
+		}
+	});
+
+
+	
+		},
+		error: function(error) {
+			console.log(error);
+			response.error(failureResponce('Failed to retrieve payment data, with error: ' + error.message));
+		}
+	});
+
+	
+});
+
+
+*/
+
+

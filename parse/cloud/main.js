@@ -583,7 +583,7 @@ Parse.Cloud.define("getPaymentById", function(request, response) {
 	});
 });
 
-/*
+
 Parse.Cloud.define("payWithPayPal", function(request, response) {
 	var moment = require('moment');
     if (request.user == undefined) {
@@ -611,6 +611,26 @@ Parse.Cloud.define("payWithPayPal", function(request, response) {
  var now = moment();
 	var futureDate = now.add('y', 1);
 
+
+	var payPalPayment = {
+"actionType":"PAY",    // Specify the payment action
+"currencyCode":payment.currencySymbol,  // The currency of the payment
+"receiverList":{"receiver":[{
+"amount":payment.total,                    // The payment amount
+"email":"merchant@ncr.com"}]  // The payment Receiver's email address
+},
+
+// Where the Sender is redirected to after approving a successful payment
+"returnUrl":"http://Payment-Success-URL",
+
+// Where the Sender is redirected to upon a canceled payment
+"cancelUrl":"http://Payment-Cancel-URL",
+"requestEnvelope":{
+"errorLanguage":"en_US",    // Language used to display errors
+"detailLevel":"ReturnAll"   // Error detail level
+}
+} 
+
 	Parse.Cloud.httpRequest({
 		method: 'POST',
 		url: ' https://svcs.sandbox.paypal.com/AdaptivePayments/Pay',
@@ -619,19 +639,11 @@ Parse.Cloud.define("payWithPayPal", function(request, response) {
 			'X-PAYPAL-SECURITY-USERID': 'pavel.yankelevich-facilitator_api1.ncr.com',
 			'X-PAYPAL-SECURITY-PASSWORD': 'U5WF37CSX9WSPCXP',
 			'X-PAYPAL-SECURITY-SIGNATURE': 'AFcWxV21C7fd0v3bYYYRCpSSRl31A84oshmk-KxnmMfYmt3yw-ylVlcA',
-			'X-PAYPAL-REQUEST-DATA-FORMAT': 'NV',
+			'X-PAYPAL-REQUEST-DATA-FORMAT': 'JSON',
 			'X-PAYPAL-RESPONSE-DATA-FORMAT': 'JSON',
 			'X-PAYPAL-APPLICATION-ID': 'APP-80W284485P519543T'
 		},
-		body: {
-			'returnUrl': 'http://www.yourdomain.com/success.html',
-			'cancelUrl': 'http://www.yourdomain.com/cancel.html',
-			'startingDate': now.format('YYYY-MM-DD'),
-			'endingDate': futureDate.format('YYYY-MM-DD'),
-			'currencyCode': 'USD',
-			'requestEnvelope.errorLanguage': 'en_US',
-			'pinType': 'REQUIRED'
-		},
+		body: payPalPayment,
 		success: function(httpResponse) {
 			if (httpResponse.data["responseEnvelope"]["ack"] == "Success") {
 
@@ -696,6 +708,6 @@ Parse.Cloud.define("payWithPayPal", function(request, response) {
 });
 
 
-*/
+
 
 

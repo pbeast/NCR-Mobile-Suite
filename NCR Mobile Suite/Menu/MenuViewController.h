@@ -24,6 +24,7 @@ typedef NS_ENUM(NSUInteger, PaneViewControllerType) {
 @property (nonatomic, assign) PaneViewControllerType paneViewControllerType;
 @property (nonatomic) MenuHeaderView *headerView;
 
-- (void)transitionToViewController:(PaneViewControllerType)paneViewControllerType;
+-(void)transitionToViewController:(PaneViewControllerType)paneViewControllerType;
 -(void)updateViewController:(PaneViewControllerType)paneViewControllerType;
+-(void)presentPaymentRequestWithId:(NSString*)paymentRequestId;
 @end

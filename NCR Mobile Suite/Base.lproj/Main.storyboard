@@ -261,6 +261,145 @@ Singapore 569933</string>
             </objects>
             <point key="canvasLocation" x="1130" y="1047"/>
         </scene>
+        <!--Confirm Payment View Controller-->
+        <scene sceneID="LNu-mn-5Sj">
+            <objects>
+                <viewController storyboardIdentifier="ConfirmPayment" useStoryboardIdentifierAsRestorationIdentifier="YES" id="nKu-iA-qDp" customClass="ConfirmPaymentViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ngz-t7-1SL"/>
+                        <viewControllerLayoutGuide type="bottom" id="MfA-kH-ghg"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="60W-ev-peC">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mof-fU-wZE" customClass="PFImageView">
+                                <rect key="frame" x="16" y="19" width="65" height="65"/>
+                                <color key="backgroundColor" red="0.92226957070707072" green="0.92226957070707072" blue="0.92226957070707072" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="65" id="0Qb-ni-Ub6"/>
+                                    <constraint firstAttribute="height" constant="65" id="pvS-zZ-Wcq"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="NTUC Fairprice" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p90-B3-ch0">
+                                <rect key="frame" x="89" y="19" width="215" height="19"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="19" id="Esk-gq-20p"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="AmericanTypewriter-Bold" family="American Typewriter" pointSize="16"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$999.99" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FzS-7F-gf8">
+                                <rect key="frame" x="16" y="107" width="288" height="34"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="34" id="HT6-CZ-SCy"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="AmericanTypewriter" family="American Typewriter" pointSize="26"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Your PayPal pincode" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="WzP-5U-IwB">
+                                <rect key="frame" x="16" y="302" width="288" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="xy1-bb-PLH"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done" secureTextEntry="YES"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cPc-7t-YvD">
+                                <rect key="frame" x="16" y="374" width="288" height="40"/>
+                                <color key="backgroundColor" red="0.1920124292" green="0.53590941430000005" blue="0.0088957725089999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="YiY-bO-FJw"/>
+                                </constraints>
+                                <state key="normal" title="Confirm">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="confirmPayment:" destination="nKu-iA-qDp" eventType="touchUpInside" id="ZF0-i3-GKo"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uXX-9C-SaU">
+                                <rect key="frame" x="16" y="420" width="288" height="40"/>
+                                <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="PZc-OP-zro"/>
+                                </constraints>
+                                <state key="normal" title="Decline">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="declinePayment:" destination="nKu-iA-qDp" eventType="touchUpInside" id="KVt-c1-ap2"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="wordWrap" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lEs-qT-vgj">
+                                <rect key="frame" x="89" y="39" width="215" height="49"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="49" id="KR2-LG-rHa"/>
+                                </constraints>
+                                <string key="text">Ang Mo Kio Ave.3 #B2-26
+Singapore 569933 SSS</string>
+                                <fontDescription key="fontDescription" name="AmericanTypewriter" family="American Typewriter" pointSize="14"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To confirm payment, please type-in your PayPal pincode, choosen during connection of PayPal to your account " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7qb-AF-YPi">
+                                <rect key="frame" x="16" y="149" width="288" height="85"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" priority="750" constant="85" id="25M-Wz-erE"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="7qb-AF-YPi" firstAttribute="trailing" secondItem="60W-ev-peC" secondAttribute="trailingMargin" id="1hT-a0-uJZ"/>
+                            <constraint firstItem="lEs-qT-vgj" firstAttribute="trailing" secondItem="60W-ev-peC" secondAttribute="trailingMargin" id="4Ov-uT-SLa"/>
+                            <constraint firstItem="WzP-5U-IwB" firstAttribute="trailing" secondItem="60W-ev-peC" secondAttribute="trailingMargin" id="ATk-5e-V3B"/>
+                            <constraint firstItem="WzP-5U-IwB" firstAttribute="leading" secondItem="60W-ev-peC" secondAttribute="leadingMargin" id="BY1-x8-Y7X"/>
+                            <constraint firstItem="FzS-7F-gf8" firstAttribute="top" secondItem="mof-fU-wZE" secondAttribute="bottom" constant="23" id="CJp-1C-Aal"/>
+                            <constraint firstItem="FzS-7F-gf8" firstAttribute="top" secondItem="lEs-qT-vgj" secondAttribute="bottom" constant="19" id="Cyi-LI-ttO"/>
+                            <constraint firstItem="FzS-7F-gf8" firstAttribute="trailing" secondItem="60W-ev-peC" secondAttribute="trailingMargin" id="DIF-fa-GbE"/>
+                            <constraint firstItem="mof-fU-wZE" firstAttribute="leading" secondItem="60W-ev-peC" secondAttribute="leadingMargin" id="JOV-fO-Aqg"/>
+                            <constraint firstItem="MfA-kH-ghg" firstAttribute="top" secondItem="uXX-9C-SaU" secondAttribute="bottom" constant="20" id="LL6-ta-jQB"/>
+                            <constraint firstItem="cPc-7t-YvD" firstAttribute="leading" secondItem="60W-ev-peC" secondAttribute="leadingMargin" id="Lay-bP-Rkm"/>
+                            <constraint firstItem="p90-B3-ch0" firstAttribute="trailing" secondItem="60W-ev-peC" secondAttribute="trailingMargin" id="LeX-Rs-Lcb"/>
+                            <constraint firstItem="p90-B3-ch0" firstAttribute="leading" secondItem="mof-fU-wZE" secondAttribute="trailing" constant="8" id="QsE-KR-Wby"/>
+                            <constraint firstItem="uXX-9C-SaU" firstAttribute="trailing" secondItem="60W-ev-peC" secondAttribute="trailingMargin" id="SwU-7s-f38"/>
+                            <constraint firstItem="mof-fU-wZE" firstAttribute="top" relation="lessThanOrEqual" secondItem="ngz-t7-1SL" secondAttribute="bottom" constant="19" id="bLa-LS-4yU"/>
+                            <constraint firstItem="uXX-9C-SaU" firstAttribute="top" secondItem="cPc-7t-YvD" secondAttribute="bottom" constant="6" id="bfc-Bv-D3U"/>
+                            <constraint firstItem="FzS-7F-gf8" firstAttribute="top" relation="greaterThanOrEqual" secondItem="ngz-t7-1SL" secondAttribute="bottom" id="fhD-Fy-s1s"/>
+                            <constraint firstItem="cPc-7t-YvD" firstAttribute="trailing" secondItem="60W-ev-peC" secondAttribute="trailingMargin" id="g9R-Tm-AbA"/>
+                            <constraint firstItem="cPc-7t-YvD" firstAttribute="top" secondItem="WzP-5U-IwB" secondAttribute="bottom" constant="28" id="hBX-d2-B8h"/>
+                            <constraint firstItem="uXX-9C-SaU" firstAttribute="leading" secondItem="60W-ev-peC" secondAttribute="leadingMargin" id="hc2-3F-2gb"/>
+                            <constraint firstItem="lEs-qT-vgj" firstAttribute="top" secondItem="p90-B3-ch0" secondAttribute="bottom" constant="1" id="hs2-AL-vAO"/>
+                            <constraint firstItem="FzS-7F-gf8" firstAttribute="leading" secondItem="60W-ev-peC" secondAttribute="leadingMargin" id="oya-d9-aYy"/>
+                            <constraint firstItem="7qb-AF-YPi" firstAttribute="top" secondItem="FzS-7F-gf8" secondAttribute="bottom" constant="8" id="r6r-L9-BRi"/>
+                            <constraint firstItem="WzP-5U-IwB" firstAttribute="top" relation="lessThanOrEqual" secondItem="7qb-AF-YPi" secondAttribute="bottom" priority="750" constant="68" id="rCJ-RI-GVL"/>
+                            <constraint firstItem="7qb-AF-YPi" firstAttribute="leading" secondItem="60W-ev-peC" secondAttribute="leadingMargin" id="tkM-RE-ivK"/>
+                            <constraint firstItem="lEs-qT-vgj" firstAttribute="leading" secondItem="mof-fU-wZE" secondAttribute="trailing" constant="8" id="uwc-l8-WkC"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="480"/>
+                    <connections>
+                        <outlet property="logo" destination="mof-fU-wZE" id="Uhv-GM-hss"/>
+                        <outlet property="pinCode" destination="WzP-5U-IwB" id="q5r-7Z-Afw"/>
+                        <outlet property="retailerAddress" destination="lEs-qT-vgj" id="3bU-Eg-bHU"/>
+                        <outlet property="retailerName" destination="p90-B3-ch0" id="4uT-ma-5jN"/>
+                        <outlet property="total" destination="FzS-7F-gf8" id="ktA-eo-hyK"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5Ys-Sy-xlE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="854" y="1674"/>
+        </scene>
         <!--Full Receipt View Controller-->
         <scene sceneID="Dmy-zG-Fug">
             <objects>

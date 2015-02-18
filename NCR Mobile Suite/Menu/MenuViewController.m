@@ -13,8 +13,9 @@
 #import "UIViewController+ENPopUp.h"
 #import "Parse/Parse.h"
 #import "SVProgressHUD.h"
+#import "ConfirmPaymentViewController.h"
 
-@interface MenuViewController ()<MenuHeaderViewDelegate>
+@interface MenuViewController ()<MenuHeaderViewDelegate, ConfirmPaymentViewControllerDelegate>
 {
     UIButton *startShoppingButton;
 }
@@ -144,6 +145,42 @@
     }
 }
 
+-(void)paymentDeclined{
+    [self.dynamicsDrawerViewController dismissPopUpViewController];
+}
+
+-(void)paymentConfirmed{
+    [self.dynamicsDrawerViewController dismissPopUpViewController];
+}
+
+-(void)presentPaymentRequestWithId:(NSString*)paymentRequestId
+{
+    [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
+
+    [PFCloud callFunctionInBackground:@"getPaymentById" withParameters:@{ @"paymentId" : paymentRequestId } block:^(NSDictionary *result, NSError *error)
+    {
+        [SVProgressHUD dismiss];
+         
+        if (!error){
+            ConfirmPaymentViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ConfirmPayment"];
+            vc.delegate = self;
+            NSDictionary *data = result[@"data"];
+            [vc initWithData:data andPaymentId:paymentRequestId];
+
+            CGRect f = self.dynamicsDrawerViewController.view.frame;
+            f = CGRectInset(f, f.size.width * 0.1, f.size.height * 0.1);
+
+            vc.view.frame = f;//CGRectMake(0, 0, 270.0f, 380.0f);
+            [self.dynamicsDrawerViewController presentPopUpViewController:vc completion:^{
+
+            }];
+        }
+        else{
+
+        }
+    }];
+}
+
 - (void)transitionToViewController:(PaneViewControllerType)paneViewControllerType
 {
     // Close pane if already displaying the pane view controller
@@ -213,7 +250,9 @@
 {
 //    [self.dynamicsDrawerViewController setPaneState:MSDynamicsDrawerPaneStateOpen inDirection:MSDynamicsDrawerDirectionRight animated:YES allowUserInterruption:YES completion:nil];
     
+    
     UIViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"SyncViewController"];
+//    UIViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ConfirmPayment"];
     
     CGRect f = self.dynamicsDrawerViewController.view.frame;
     f = CGRectInset(f, f.size.width * 0.1, f.size.height * 0.1);

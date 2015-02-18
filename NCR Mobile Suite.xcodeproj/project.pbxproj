@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CC4F5FEEF2A77FA56E250F47 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 795C829C43DE72E1D7D74227 /* libPods.a */; };
 		EC28B66A1A876C20006573F2 /* libPayPalMPL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EC78E9741A8257B4009FDF66 /* libPayPalMPL.a */; };
+		EC5F79B81A90E25B00A43125 /* ConfirmPaymentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC5F79B71A90E25B00A43125 /* ConfirmPaymentViewController.m */; };
 		EC789A5F1A7CF4C10069EFC3 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC789A5E1A7CF4C10069EFC3 /* MenuViewController.m */; };
 		EC789A621A7CF7AA0069EFC3 /* UIColor_Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = EC789A611A7CF7AA0069EFC3 /* UIColor_Utils.m */; };
 		EC789A651A7CF9E50069EFC3 /* SyncViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC789A641A7CF9E50069EFC3 /* SyncViewController.m */; };
@@ -36,6 +37,8 @@
 		121C80CE3679B8BAB04040F6 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		795C829C43DE72E1D7D74227 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B20DD7D1000BAD30268E5842 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		EC5F79B61A90E25B00A43125 /* ConfirmPaymentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfirmPaymentViewController.h; sourceTree = "<group>"; };
+		EC5F79B71A90E25B00A43125 /* ConfirmPaymentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfirmPaymentViewController.m; sourceTree = "<group>"; };
 		EC789A5D1A7CF4C10069EFC3 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuViewController.h; sourceTree = "<group>"; };
 		EC789A5E1A7CF4C10069EFC3 /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuViewController.m; sourceTree = "<group>"; };
 		EC789A601A7CF7AA0069EFC3 /* UIColor_Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColor_Utils.h; sourceTree = "<group>"; };
@@ -171,6 +174,8 @@
 				EC789A731A7D229A0069EFC3 /* Images.xcassets */,
 				ECFE6CA11A896E4A008B749A /* AppIcons.xcassets */,
 				ECFE6CA31A8972B9008B749A /* LaunchImage.xcassets */,
+				EC5F79B61A90E25B00A43125 /* ConfirmPaymentViewController.h */,
+				EC5F79B71A90E25B00A43125 /* ConfirmPaymentViewController.m */,
 			);
 			path = "NCR Mobile Suite";
 			sourceTree = "<group>";
@@ -353,6 +358,7 @@
 				EC789A701A7CFC310069EFC3 /* ReceiptsTableViewController.m in Sources */,
 				ECA48B391A7F980400AA0A17 /* MenuCell.m in Sources */,
 				EC9F21791A87B0A800C4450D /* JWBlurView.m in Sources */,
+				EC5F79B81A90E25B00A43125 /* ConfirmPaymentViewController.m in Sources */,
 				EC789A5F1A7CF4C10069EFC3 /* MenuViewController.m in Sources */,
 				EC85EA631A790E8A0006CD24 /* main.m in Sources */,
 				EC789A711A7CFC310069EFC3 /* ReceiptsTableCell.m in Sources */,
@@ -420,6 +426,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"'$(SRCROOT)/NCR Mobile Suite/3rdParties'",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LIBRARY_SEARCH_PATHS = "'$(SRCROOT)/NCR Mobile Suite/3rdParties'/**";
@@ -461,6 +468,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"'$(SRCROOT)/NCR Mobile Suite/3rdParties'",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LIBRARY_SEARCH_PATHS = "'$(SRCROOT)/NCR Mobile Suite/3rdParties'/**";
@@ -490,7 +498,6 @@
 					"\"${PODS_ROOT}/Headers/Public/ParseUI\"",
 					"\"${PODS_ROOT}/Headers/Public/SVProgressHUD\"",
 					"\"${PODS_ROOT}/Headers/Public/ZXingObjC\"",
-					"'$(SRCROOT)/NCR Mobile Suite/3rdParties'/**",
 				);
 				INFOPLIST_FILE = "NCR Mobile Suite/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -522,7 +529,6 @@
 					"\"${PODS_ROOT}/Headers/Public/ParseUI\"",
 					"\"${PODS_ROOT}/Headers/Public/SVProgressHUD\"",
 					"\"${PODS_ROOT}/Headers/Public/ZXingObjC\"",
-					"'$(SRCROOT)/NCR Mobile Suite/3rdParties'/**",
 				);
 				INFOPLIST_FILE = "NCR Mobile Suite/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

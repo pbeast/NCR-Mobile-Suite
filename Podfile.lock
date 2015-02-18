@@ -1,8 +1,9 @@
 PODS:
   - Bolts (1.1.3)
   - CardIO (5.0.0)
-  - Facebook-iOS-SDK (3.22.0):
+  - Facebook-iOS-SDK (3.23.0):
     - Bolts (~> 1.0)
+  - IQKeyboardManager (3.2.1.1)
   - MSDynamicsDrawerViewController (1.5.1)
   - Parse (1.6.2):
     - Bolts (~> 1.1)
@@ -12,6 +13,7 @@ PODS:
   - ParseUI (1.1.0):
     - Parse (~> 1.6)
     - ParseFacebookUtils (~> 1.6)
+  - SimulatorRemoteNotifications (0.0.3)
   - SVProgressHUD (HEAD based on 1.1.2)
   - THLabel (1.4.6)
   - ZXingObjC (3.0.3):
@@ -21,8 +23,10 @@ PODS:
 DEPENDENCIES:
   - CardIO
   - Facebook-iOS-SDK
+  - IQKeyboardManager
   - MSDynamicsDrawerViewController
   - ParseUI
+  - SimulatorRemoteNotifications (~> 0.0.3)
   - SVProgressHUD (HEAD)
   - THLabel (~> 1.4.6)
   - ZXingObjC (~> 3.0)
@@ -30,11 +34,13 @@ DEPENDENCIES:
 SPEC CHECKSUMS:
   Bolts: 3db0a875235e0c9042b013af13af0f00f79b102c
   CardIO: 98f2e0dff54baa480d560567030eb42e656cf8c5
-  Facebook-iOS-SDK: 0eda8ff7120aada0a9c5f98552f7625da6c3440a
+  Facebook-iOS-SDK: 3d65f685348b789e46a9aacf92bfa85b60b63755
+  IQKeyboardManager: 4e83eef847c6f5edbd670284e50c7e3d643ebdb5
   MSDynamicsDrawerViewController: 0002059480a4b5ddde7eafbafb958a79a9b0ffaf
   Parse: 60d65108fe39da77ec16c9e51d74b4d296b21424
   ParseFacebookUtils: 0b86cd67283c60d10e3ddc8427f989f5e60ebbd7
   ParseUI: 00c4c39aab3944d88758b55416581650caa37f89
+  SimulatorRemoteNotifications: e7f4b0d8b3fbf295954a9ab25846c47ea0d9f4e2
   SVProgressHUD: da7a49e789af645d9279ffbca62318945a832438
   THLabel: 1cf3bad0f33c2bcdee075ce2e4f080791a374d95
   ZXingObjC: 1eebdf4334b7de660ae42ddd23bd97b6d777b07d

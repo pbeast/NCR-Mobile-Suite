@@ -113,8 +113,8 @@
 
 -(IBAction)startRefresh:(id)sender
 {
-    if (![sender isKindOfClass:[UIRefreshControl class]])
-        [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeNone];
+//    if (![sender isKindOfClass:[UIRefreshControl class]])
+//        [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeNone];
     
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSDate* lastFetchTime = [defaults objectForKey:@"lastFetchTime"];

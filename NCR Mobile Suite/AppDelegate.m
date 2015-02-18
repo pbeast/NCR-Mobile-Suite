@@ -15,6 +15,9 @@
 #import <ParseUI/ParseUI.h>
 #import "SVProgressHUD.h"
 #import "PayPal.h"
+#import "IQKeyboardManager.h"
+
+#import "UIApplication+SimulatorRemoteNotifications.h"
 
 @interface AppDelegate ()<PayPalPaymentDelegate, PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate>
 {
@@ -77,6 +80,8 @@
 
     [self initParse:launchOptions];
     
+    [[IQKeyboardManager sharedManager] setToolbarManageBehaviour:IQAutoToolbarByTag];
+
     self.dynamicsDrawerViewController = (MSDynamicsDrawerViewController *)self.window.rootViewController;
     self.dynamicsDrawerViewController.delegate = self;
     
@@ -102,8 +107,6 @@
     // Transition to the first view controller
     [menuViewController transitionToViewController:PaneViewControllerTypeShoppingHistory];
 
-//    [self.dynamicsDrawerViewController setPaneState:MSDynamicsDrawerPaneStateOpen inDirection:MSDynamicsDrawerDirectionRight];
-    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = self.dynamicsDrawerViewController;
     [self.window makeKeyAndVisible];
@@ -121,7 +124,10 @@
             [menuViewController transitionToViewController:PaneViewControllerTypeShoppingHistory];
         }
     }
-
+    
+#if DEBUG
+    [application listenForRemoteNotifications];
+#endif
     
     return YES;
 }
@@ -509,8 +515,13 @@
 
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [menuViewController transitionToViewController:PaneViewControllerTypeShoppingHistory];
-    [menuViewController updateViewController:PaneViewControllerTypeShoppingHistory];
+    if ([userInfo[@"pushReason"] isEqual:@(0)]){
+        [menuViewController transitionToViewController:PaneViewControllerTypeShoppingHistory];
+        [menuViewController updateViewController:PaneViewControllerTypeShoppingHistory];
+    }
+    else if ([userInfo[@"pushReason"] isEqual:@(1)]){
+        [menuViewController presentPaymentRequestWithId:userInfo[@"paymentId"]];
+    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

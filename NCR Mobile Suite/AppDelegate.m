@@ -76,7 +76,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    [PayPal initializeWithAppID:@"APP-80W284485P519543T" forEnvironment:ENV_NONE];
+    [PayPal initializeWithAppID:@"APP-80W284485P519543T" forEnvironment:ENV_SANDBOX];
 
     [self initParse:launchOptions];
     
@@ -126,7 +126,7 @@
     }
     
 #if DEBUG
-    [application listenForRemoteNotifications];
+//    [application listenForRemoteNotifications];
 #endif
     
     return YES;
@@ -434,7 +434,8 @@
 
 - (void)paymentSuccessWithKey:(NSString *)payKey andStatus:(PayPalPaymentStatus)paymentStatus
 {
-    if (paymentStatus == STATUS_COMPLETED){
+//    if (paymentStatus == STATUS_COMPLETED)
+    {
         [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
         [PFCloud callFunctionInBackground:@"confirmPayPalPreapprovalKey"
                            withParameters:@{}
@@ -469,7 +470,7 @@
 -(void)connectPayPal{
     [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
     [PFCloud callFunctionInBackground:@"getPayPalPreapprovalKey"
-                       withParameters:@{}
+                       withParameters:@{@"startDate" : [NSDate date]}
                                 block:^(NSDictionary*result, NSError *error) {
                                     [SVProgressHUD dismiss];
                                     if (!error) {

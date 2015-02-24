@@ -14,6 +14,7 @@
 #import "Parse/Parse.h"
 #import "SVProgressHUD.h"
 #import "ConfirmPaymentViewController.h"
+#import "PayPal.h"
 
 @interface MenuViewController ()<MenuHeaderViewDelegate, ConfirmPaymentViewControllerDelegate>
 {
@@ -92,13 +93,15 @@
                                       @(PaneViewControllerTypeShoppingHistory) : @"Shopping History",
                                       @(PaneViewControllerTypeShoppingLists) : @"Shopping Lists",
                                       @(PaneViewControllerTypePayPal) : @"Connect to PayPal",
-                                      @(PaneViewControllerTypeLoyalty) : @"Loyalty",
+                                      @(PaneViewControllerTypeLoyalty) : @"Retailers",
+                                      @(PaneViewControllerTypePromotions) : @"Promotions"
                                       };
     self.paneViewControllerIcons = @{
                                       @(PaneViewControllerTypeShoppingHistory) : @"receipt",
                                       @(PaneViewControllerTypeShoppingLists) : @"shopping_list",
                                       @(PaneViewControllerTypePayPal) : @"PayPalLogo",
-                                      @(PaneViewControllerTypeLoyalty) : @"loyalty-cards"
+                                      @(PaneViewControllerTypeLoyalty) : @"loyalty-cards",
+                                      @(PaneViewControllerTypePromotions) : @"Sale"
                                       };
     
     self.paneViewControllerIdentifiers = @{

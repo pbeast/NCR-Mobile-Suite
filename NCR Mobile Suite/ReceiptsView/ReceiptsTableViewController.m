@@ -64,7 +64,7 @@
     }];
 }
 
-- (void)processReceiptsFetchData:(NSDictionary *)result error:(NSError *)error
+-(void) processReceiptsFetchData:(NSDictionary *)result error:(NSError *)error
 {
     if (!error)
     {

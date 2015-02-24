@@ -57,8 +57,18 @@
 */
 
 - (IBAction)declinePayment:(id)sender {
-    if (_delegate != nil)
-        [_delegate paymentDeclined];
+    [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
+    
+    [PFCloud callFunctionInBackground:@"payWithPayPal" withParameters:@{ } block:^(NSDictionary *result, NSError *error)
+     {
+         [SVProgressHUD dismiss];
+         if (!error){
+         }
+         
+         if (_delegate != nil)
+             [_delegate paymentDeclined];
+     }];
+     
 }
 
 - (IBAction)confirmPayment:(id)sender {
@@ -72,30 +82,41 @@
          
          UIAlertController* ac;
          
-         UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-             if (_delegate != nil)
-                 [_delegate paymentDeclined];
-         }];
-         
-
          if (!error){
              if ([result[@"responseEnvelope"][@"ack"] isEqualToString:@"Failure"]){
-                 NSDictionary* error = result[@"error"][0];
-                 NSNumber* errorId = error[@"errorId"];
-                 if ([errorId isEqual:@(580022)]){
-                     ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:error[@"message"] preferredStyle:UIAlertControllerStyleAlert];
+                 NSDictionary* payPalError = result[@"error"][0];
+                 NSString* errorId = payPalError[@"errorId"];
+                 if ([errorId isEqualToString:@"580022"]){
+                     ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:@"Have you typed your pin correctly?" preferredStyle:UIAlertControllerStyleAlert];
                      
                      [ac addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
                  }
                  else{
-                    ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:error[@"message"] preferredStyle:UIAlertControllerStyleAlert];
+                     ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:@"Failed to process payment" preferredStyle:UIAlertControllerStyleAlert];
+                     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                         if (_delegate != nil)
+                             [_delegate paymentDeclined];
+                     }];
                      [ac addAction:okAction];
                  }
              }
+             else
+             {
+                 ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:@"Payment Succeeded" preferredStyle:UIAlertControllerStyleAlert];
+                 UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                     if (_delegate != nil)
+                         [_delegate paymentConfirmed];
+                 }];
+                 [ac addAction:okAction];
+             }
          }
          else{
-             [[[UIAlertView alloc] initWithTitle:@"NCR Mobile Suite" message:@"Hurray!!!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-             ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:@"Hurray!!!" preferredStyle:UIAlertControllerStyleAlert];
+             
+             ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:[error userInfo][@"error"]    preferredStyle:UIAlertControllerStyleAlert];
+             UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                 if (_delegate != nil)
+                     [_delegate paymentDeclined];
+             }];
              [ac addAction:okAction];
          }
 

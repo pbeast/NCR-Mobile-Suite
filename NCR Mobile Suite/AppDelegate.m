@@ -120,13 +120,18 @@
         NSDictionary* userInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
         if (userInfo != nil)
         {
-            NSLog(@"Launched from push notification: %@", userInfo);
-            [menuViewController transitionToViewController:PaneViewControllerTypeShoppingHistory];
+            if ([userInfo[@"pushReason"] isEqual:@(0)]){
+//                [menuViewController transitionToViewController:PaneViewControllerTypeShoppingHistory];
+//                [menuViewController updateViewController:PaneViewControllerTypeShoppingHistory];
+            }
+            else if ([userInfo[@"pushReason"] isEqual:@(1)]){
+                [menuViewController presentPaymentRequestWithId:userInfo[@"paymentId"]];
+            }
         }
     }
     
 #if DEBUG
-//    [application listenForRemoteNotifications];
+    [application listenForRemoteNotifications];
 #endif
     
     return YES;

@@ -39,6 +39,8 @@
     [[self retailerName] setText:displayData[@"retailerName"]];
     [[self retailerAddress] setText:displayData[@"storeAddress"]];
     [[self total] setText:[NSString stringWithFormat:@"%@%.2f", displayData[@"currencySymbol"], [displayData[@"total"] doubleValue]]];
+    
+    [[self pinCode] becomeFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -59,7 +61,7 @@
 - (IBAction)declinePayment:(id)sender {
     [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeGradient];
     
-    [PFCloud callFunctionInBackground:@"payWithPayPal" withParameters:@{ } block:^(NSDictionary *result, NSError *error)
+    [PFCloud callFunctionInBackground:@"rejectPayment" withParameters:@{ @"paymentId" : paymentRequestId } block:^(NSDictionary *result, NSError *error)
      {
          [SVProgressHUD dismiss];
          if (!error){
@@ -83,39 +85,22 @@
          UIAlertController* ac;
          
          if (!error){
-             if ([result[@"responseEnvelope"][@"ack"] isEqualToString:@"Failure"]){
-                 NSDictionary* payPalError = result[@"error"][0];
-                 NSString* errorId = payPalError[@"errorId"];
-                 if ([errorId isEqualToString:@"580022"]){
-                     ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:@"Have you typed your pin correctly?" preferredStyle:UIAlertControllerStyleAlert];
-                     
-                     [ac addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-                 }
-                 else{
-                     ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:@"Failed to process payment" preferredStyle:UIAlertControllerStyleAlert];
-                     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                         if (_delegate != nil)
-                             [_delegate paymentDeclined];
-                     }];
-                     [ac addAction:okAction];
-                 }
-             }
-             else
-             {
-                 ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:@"Payment Succeeded" preferredStyle:UIAlertControllerStyleAlert];
-                 UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                     if (_delegate != nil)
-                         [_delegate paymentConfirmed];
-                 }];
-                 [ac addAction:okAction];
-             }
-         }
-         else{
-             
-             ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:[error userInfo][@"error"]    preferredStyle:UIAlertControllerStyleAlert];
+             ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:result[@"message"] preferredStyle:UIAlertControllerStyleAlert];
              UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                  if (_delegate != nil)
-                     [_delegate paymentDeclined];
+                     [_delegate paymentConfirmed];
+             }];
+             [ac addAction:okAction];
+         }
+         else{
+             NSData *data = [[error userInfo][@"error"] dataUsingEncoding:NSUTF8StringEncoding];
+             id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+             
+             ac = [UIAlertController alertControllerWithTitle:@"NCR Mobile Suite" message:json[@"message"]    preferredStyle:UIAlertControllerStyleAlert];
+             UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                 if ([json[@"data"][@"isFatalError"] isEqual:@(YES)])
+                     if (_delegate != nil)
+                         [_delegate paymentDeclined];
              }];
              [ac addAction:okAction];
          }

@@ -1,3 +1,5 @@
+var Consts = require('cloud/consts.js');
+
 Parse.Cloud.job("cleanAssociations", function(request, status) {
 	var moment = require('moment');
 
@@ -19,10 +21,18 @@ Parse.Cloud.job("cleanAssociations", function(request, status) {
 	});
 });
 
-var failureResponce = function(messageText) {
+var failureResponce = function(messageText, responseData) {
+	if (typeof responseData === "undefined") {
+		return {
+			status: 0,
+			message: messageText
+		};
+	}
+
 	return {
-		status: 0,
-		message: messageText
+		status: 1,
+		message: messageText,
+		data: responseData
 	};
 }
 
@@ -521,12 +531,12 @@ var createPaymentAndSendPush = function(response, association, currencySymbol, t
 		"storeAddress": storeAddress,
 		"retailer": retailer,
 		"callBackUrl": callBackUrl,
-		"posTransactionId" : posTransactionId,
+		"posTransactionId": posTransactionId,
 		"status": 0 //creataed
 	}, {
 		success: function(updatedPayment) {
 			console.log("Payment stored successful");
-			
+
 			console.log(updatedPayment);
 			var paymentIdValue = updatedPayment.id;
 			console.log("paymentId = " + paymentIdValue);
@@ -546,7 +556,7 @@ var createPaymentAndSendPush = function(response, association, currencySymbol, t
 					console.log("Push  for payment was successful");
 					response.success(successResponce("Payment created successfully; Push was successful", {
 						paymentId: paymentIdValue,
-						"posTransactionId" : posTransactionId
+						"posTransactionId": posTransactionId
 					}));
 				},
 				error: function(error) {
@@ -644,7 +654,7 @@ Parse.Cloud.define("rejectPayment", function(request, response) {
 				success: function(updatedPayment) {
 					Parse.Cloud.httpRequest({
 						method: 'POST',
-						url: payment.get('callBackUrl') + "/rejected",
+						url: payment.get('callBackUrl') + "/rejectedByUser",
 						body: {},
 						success: function(httpResponse) {
 							response.success(successResponce('Payment rejected', httpResponse.data));
@@ -668,52 +678,313 @@ Parse.Cloud.define("rejectPayment", function(request, response) {
 });
 
 
+// ------- POS Update Request -------
 //http://address:port/storeId/posId/result/resultData
 //result:
 //	success; resultData = {provider: *PayPal*, payPalApproval: payPalApprovalKey, paymentId : xxx}
 //	providerAccessError
 //	providerError; resultData = {provider: '*PayPal*', errorDescription : 'xxxx'}
 //	rejectedByUser
+//	serverSyncError
+//
 
 var updatePaymentAndPos = function(payment, status, providerResponseData, posMessage) {
-	payment.save({
-		'status': status,
-		'providerResponseData': providerResponseData,
-		'processedUsing': 'PayPal'
-	}, {
-		success: function(updatedPayment) {
-			Parse.Cloud.httpRequest({
-				method: 'POST',
-				url: payment.get('callBackUrl') + "/" + posMessage,
-				body: {},
-				success: function(httpResponse) {
-					response.success(providerResponseData);
-				},
-				error: function(error) {
-					console.log("Failed to update POS: " + error.message);
-					response.error(failureResponce("Payment is done, but failed to update POS: " + error));
-				}
-			});
-		},
-		error: function(error) {
-			response.error(failureResponce('Requested payment is incorrect status ' + error.message));
-		}
-	});
+	if (payment != undefined) {
+		payment.save({
+			'status': status,
+			'providerResponseData': providerResponseData,
+			'processedUsing': 'PayPal'
+		}, {
+			success: function(updatedPayment) {
+				Parse.Cloud.httpRequest({
+					method: 'POST',
+					url: payment.get('callBackUrl') + "/" + posMessage,
+					body: {},
+					success: function(httpResponse) {
+						response.success(providerResponseData);
+					},
+					error: function(error) {
+						console.log("Failed to update POS: " + error.message);
+						response.error(failureResponce("Payment is done, but failed to update POS: " + error));
+					}
+				});
+			},
+			error: function(error) {
+				response.error(failureResponce('Failed to update payment ' + error.message));
+			}
+		});
+	} else {
+		Parse.Cloud.httpRequest({
+			method: 'POST',
+			url: payment.get('callBackUrl') + "/" + posMessage,
+			body: {},
+			success: function(httpResponse) {
+				response.success(providerResponseData);
+			},
+			error: function(error) {
+				console.log("Failed to update POS: " + error.message);
+				response.error(failureResponce("Failed to update POS about payment status: " + error));
+			}
+		});
+	}
 };
 
+Parse.Cloud.define("refundPayment", function(request, response) {
+	if (request.params.paymentId == undefined) {
+		response.error(failureResponce("No Payment Id", {
+			isFatalError: true
+		}));
+		return
+	}
+});
+
+
 Parse.Cloud.define("payWithPayPal", function(request, response) {
+
 	if (request.user == undefined) {
-		response.error(failureResponce("You have to login first"));
+		response.error(failureResponce("You have to login first", {
+			isFatalError: true
+		}));
+		return;
+	}
+
+	if (request.params.paymentId == undefined) {
+		response.error(failureResponce("No Payment Id", {
+			isFatalError: true
+		}));
+		return;
+	}
+
+	if (request.params.pinCode == undefined) {
+		response.error(failureResponce("PayPal pinCode is required", {
+			isFatalError: true
+		}));
+		return;
+	}
+
+	if (request.params.pinCode.length < 4 || request.params.pinCode.length > 8) {
+		response.error(failureResponce("Have you typed your pin correctly?", {
+			isFatalError: false
+		}));
+		return;
+	}
+
+	var Payment = Parse.Object.extend("Payment");
+	var paymentQuery = new Parse.Query(Payment);
+	paymentQuery.include("user");
+	paymentQuery.include("retailer");
+
+	var payment = undefined;
+	var providerResponseData = undefined;
+
+	paymentQuery.get(request.params.paymentId).then(
+		function(foundPayment) {
+			if (foundPayment.get('status') != Consts.PAYMENT_STATUS_NEW) {
+				return Parse.Promise.error({
+					clientMessage: "Payment already processed",
+					isFatalError: true
+				});
+			}
+
+			if (foundPayment.get('user').id != request.user.id) {
+				return Parse.Promise.error({
+					clientMessage: "This payment is not for you",
+					isFatalError: true
+				});
+			}
+
+			payment = foundPayment;
+
+			var paymentMethodQuery = new Parse.Query("PaymentMethod");
+			paymentMethodQuery.equalTo("user", request.user);
+			paymentMethodQuery.equalTo("type", Consts.PAYEMNT_TYPE_PAYPAL); //PayPal
+			return paymentMethodQuery.first();
+		},
+		function(error) {
+			return Parse.Promise.error({
+				clientMessage: "Payment data wasn't found",
+				isFatalError: true
+			});
+		}
+	).then(function(paymentMethod) {
+		var connectionData = paymentMethod.get("connectionData");
+		if (connectionData != undefined && connectionData["confirmed"] == false) {
+			return Parse.Promise.error({
+				clientMessage: "Can't proceed with the payment. PayPal connection not completed",
+				isFatalError: true,
+				posMessage: ("/providerError/" + encodeURIComponent(JSON.stringify({
+					provider: 'PayPal',
+					errorDescription: 'Client not connected'
+				})))
+			});
+		}
+
+		var payPalPayment = "actionType=PAY&currencyCode=USD&feesPayer=EACHRECEIVER" +
+			"&receiverList.receiver(0).amount=" + payment.get("total") +
+			"&receiverList.receiver(0).email=" + encodeURIComponent(payment.get('retailer').get('payPalAccount')) +
+			"&returnUrl=" + encodeURIComponent("http://Payment-Success-URL") +
+			"&cancelUrl=" + encodeURIComponent("http://Payment-Cancel-URL") +
+			"&requestEnvelope.errorLanguage=en_US" +
+			"&pin=" + request.params.pinCode +
+			"&preapprovalKey=" + encodeURIComponent(connectionData['preapprovalKey']);
+
+		return Parse.Cloud.httpRequest({
+			method: 'POST',
+			url: 'https://svcs.sandbox.paypal.com/AdaptivePayments/Pay',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+				'X-PAYPAL-SECURITY-USERID': 'py250015-facilitator_api1.ncr.com',
+				'X-PAYPAL-SECURITY-PASSWORD': '4D3V7GLHR6YWVH5R',
+				'X-PAYPAL-SECURITY-SIGNATURE': 'AFcWxV21C7fd0v3bYYYRCpSSRl31AcdPEIBTurps3J6Wv8U830dyq4W0',
+				'X-PAYPAL-REQUEST-DATA-FORMAT': 'NV',
+				'X-PAYPAL-RESPONSE-DATA-FORMAT': 'JSON',
+				'X-PAYPAL-APPLICATION-ID': 'APP-80W284485P519543T'
+			},
+			body: payPalPayment
+		});
+
+	}, function(error) {
+		return Parse.Promise.error({
+			clientMessage: "PayPal connection not found. Please connect to PayPal",
+			isFatalError: true,
+			paymentNewState: Consts.PAYMENT_STATUS_DELETED,
+			posMessage: ("/providerError/" + encodeURIComponent(JSON.stringify({
+				provider: 'PayPal',
+				errorDescription: 'Client not connected'
+			})))
+		});
+	}).then(function(httpResponse) {
+			providerResponseData = httpResponse.data;
+			console.log(providerResponseData);
+
+			if (providerResponseData['responseEnvelope']['ack'] == 'Success') {
+				console.log("Payment succeeded");
+
+				return payment.save({
+					'status': Consts.PAYMENT_STATUS_PROCESSED,
+					'providerResponseData': providerResponseData,
+					'processedUsing': 'PayPal'
+				});
+			}
+
+			if (providerResponseData['error'][0]['errorId'] == '580022') { //Probelem with parameter (guess PinCode)
+				console.log("Probelem with pincode");
+				return Parse.Promise.error({
+					clientMessage: "Have you typed your pin correctly?",
+					isFatalError: false
+				});
+			}
+
+			console.log("Failed to process payment: (" + providerResponseData['error']['errorId'] + ") " + providerResponseData);
+
+			return Parse.Promise.error({
+				clientMessage: "Can't process the payment. PayPal error.",
+				isFatalError: true,
+				paymentNewState: Consts.PAYMENT_STATUS_ERROR,
+				posMessage: ("/providerError/" + encodeURIComponent(JSON.stringify({
+					provider: 'PayPal',
+					errorDescription: providerResponseData
+				})))
+			});
+		},
+		function(error) {
+			return Parse.Promise.error({
+				clientMessage: "Can't connect to provider",
+				isFatalError: true,
+				paymentNewState: Consts.PAYMENT_STATUS_DELETED,
+				posMessage: "/providerAccessError"
+			});
+		}).then(function(updatedPayment) {
+		var posResponseData = {
+			"paymentId": payment.id,
+			"posTransactionId": payment.get('posTransactionId'),
+			"approvalReference": providerResponseData['payKey'],
+			"processedUsing": "PayPal"
+		};
+
+		return Parse.Cloud.httpRequest({
+			method: 'POST',
+			url: payment.get('callBackUrl') + "/success/" + encodeURIComponent(JSON.stringify(posResponseData)),
+			body: {}
+		});
+	}).then(
+		function(httpResponse) {
+			console.log("POS updated. Going back to client");
+			response.success({
+				message: 'Payment processed successfully'
+			});
+			return;
+		},
+		function(error) {
+			if ('isFatalError' in error) {
+				console.log('rethrow error: ' + error);
+				return Parse.Promise.error(error);
+			}
+
+			console.log("Failed to update POS: ");
+			console.log(error);
+			return Parse.Promise.as({
+				message: 'Payment is done, but failed to update POS',
+				isWarning: true
+			});
+		}).then(function(finalMessage) {
+			response.success(finalMessage);
+		},
+		function(error) {
+			console.log(error);
+
+			if ('posMessage' in error) {
+				Parse.Cloud.httpRequest({
+					method: 'POST',
+					url: payment.get('callBackUrl') + "/" + error['posMessage'],
+					body: {},
+					success: function(httpResponse) {
+						response.error(failureResponce(error['clientMessage'], {
+							isFatalError: error['isFatalError']
+						}));
+					},
+					error: function(posUpdateError) {
+						console.log("Failed to update POS: " + posUpdateError.message);
+						response.error(failureResponce(error['clientMessage'], {
+							isFatalError: error['isFatalError']
+						}));
+					}
+				});
+			} else
+				response.error(failureResponce(error['clientMessage'], {
+					isFatalError: error['isFatalError']
+				}));
+		}
+	);
+});
+
+
+Parse.Cloud.define("payWithPayPal_old", function(request, response) {
+	if (request.user == undefined) {
+		response.error(failureResponce("You have to login first", {
+			isFatalError: true
+		}));
 		return
 	}
 
 	if (request.params.paymentId == undefined) {
-		response.error(failureResponce("No Payment Id"));
+		response.error(failureResponce("No Payment Id", {
+			isFatalError: true
+		}));
 		return
 	}
 
 	if (request.params.pinCode == undefined) {
-		response.error(failureResponce("PayPal pinCode is required"));
+		response.error(failureResponce("PayPal pinCode is required", {
+			isFatalError: true
+		}));
+		return
+	}
+
+	if (request.params.pinCode.length < 4 || request.params.pinCode.length > 8) {
+		response.error(failureResponce("Wrong pincode", {
+			isFatalError: false
+		}));
 		return
 	}
 
@@ -794,6 +1065,8 @@ Parse.Cloud.define("payWithPayPal", function(request, response) {
 						success: function(httpResponse) {
 
 							var providerResponseData = httpResponse.data;
+							console.log(providerResponseData);
+
 							if (providerResponseData['responseEnvelope']['ack'] == 'Success') {
 								console.log("Payment succeeded");
 
@@ -804,10 +1077,10 @@ Parse.Cloud.define("payWithPayPal", function(request, response) {
 								}, {
 									success: function(updatedPayment) {
 										var posResponseData = {
-											"paymentId" : payment.id,
-											"posTransactionId" : payment.get('posTransactionId'),
-											"approvalReference" : providerResponseData['payKey'],
-											"processedUsing" : "PayPal"
+											"paymentId": payment.id,
+											"posTransactionId": payment.get('posTransactionId'),
+											"approvalReference": providerResponseData['payKey'],
+											"processedUsing": "PayPal"
 										};
 										Parse.Cloud.httpRequest({
 											method: 'POST',
@@ -823,26 +1096,54 @@ Parse.Cloud.define("payWithPayPal", function(request, response) {
 										});
 									},
 									error: function(error) {
-										response.error(failureResponce('Requested payment is incorrect status ' + error.message));
+										response.error(failureResponce('Failed to updated Payment status' + error.message));
 									}
 								});
+							} else if (providerResponseData['error']['errorId'] == '580022') { //Probelem with parameter (guess PinCode)
+								console.log("Probelem with pincode");
+								response.error(failureResponce("Have you typed your pin correctly?", {
+									isFatalError: false
+								}));
+							} else { //Any Other Error
+								console.log("Failed to process payment: (" + providerResponseData['error']['errorId'] + ") " + providerResponseData);
+
+								updatePaymentAndPos(payment, 3, providerResponseData, "/providerError/" + encodeURIComponent(JSON.stringify({
+									provider: 'PayPal',
+									errorDescription: providerResponseData
+								})));
+
+								response.error(failureResponce("Failed to process payment", {
+									isFatalError: true
+								}));
 							}
 						},
 						error: function(httpResponse) {
 							console.log(httpResponse);
-							updatePaymentAndPos(payment, 3, null, "payPalFailure")
-							response.error(failureResponce("Failed to process payment: (" + httpResponse.status + ") " + httpResponse.text));
+							updatePaymentAndPos(payment, 3, null, "/providerError/" + encodeURIComponent(JSON.stringify({
+								provider: 'PayPal',
+								errorDescription: 'Failed to process HTTP request to PayPal'
+							})));
+
+							response.error(failureResponce("Failed to process payment", {
+								isFatalError: true
+							}));
 						}
 					});
 				},
 				error: function(error) {
-					response.error(failureResponce("Failed to find PayPal connection. Error: " + error.message));
+
+					response.error(failureResponce("Failed to find PayPal connection. Please reconnect PayPal.", {
+						isFatalError: true
+					}));
 				}
 			});
 		},
 		error: function(error) {
 			console.log(error);
-			response.error(failureResponce('Failed to retrieve payment data, with error: ' + error.message));
+			updatePaymentAndPos(undefined, 0, null, "/serverSyncError");
+			response.error(failureResponce('Failed to retrieve payment data', {
+				isFatalError: true
+			}));
 		}
 	});
 });

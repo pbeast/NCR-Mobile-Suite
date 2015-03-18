@@ -867,11 +867,19 @@ Parse.Cloud.define("payWithPayPal", function(request, response) {
 				});
 			}
 
-			if (providerResponseData['error'][0]['errorId'] == '580022') { //Probelem with parameter (guess PinCode)
+			if (providerResponseData['error'][0]['errorId'] == Consts.PAYPAL_ERROR_BAD_PINCODE) { //Probelem with parameter (guess PinCode)
 				console.log("Probelem with pincode");
 				return Parse.Promise.error({
 					clientMessage: "Have you typed your pin correctly?",
 					isFatalError: false
+				});
+			}
+
+		    else if (providerResponseData['error'][0]['errorId'] == Consts.PAYPAL_ERROR_BAD_PREAPPROOVAL) { //Probelem with parameter (bad preaproval key)
+			console.log("Probelem with preaproval");
+				return Parse.Promise.error({
+					clientMessage: "The preapproval key has been suspended,\nPlease reapprove PayPal payment",
+					isFatalError: true
 				});
 			}
 
@@ -910,10 +918,12 @@ Parse.Cloud.define("payWithPayPal", function(request, response) {
 	}).then(
 		function(httpResponse) {
 			console.log("POS updated. Going back to client");
-			response.success({
-				message: 'Payment processed successfully'
+			return Parse.Promise.as({
+				message: 'Payment processed successfully',
+				isWarning: false,
+				status: 1
 			});
-			return;
+			
 		},
 		function(error) {
 			if ('isFatalError' in error) {
@@ -928,7 +938,8 @@ Parse.Cloud.define("payWithPayPal", function(request, response) {
 				isWarning: true
 			});
 		}).then(function(finalMessage) {
-			response.success(finalMessage);
+			 response.success(finalMessage);
+			 return;
 		},
 		function(error) {
 			console.log(error);
@@ -1099,12 +1110,20 @@ Parse.Cloud.define("payWithPayPal_old", function(request, response) {
 										response.error(failureResponce('Failed to updated Payment status' + error.message));
 									}
 								});
-							} else if (providerResponseData['error']['errorId'] == '580022') { //Probelem with parameter (guess PinCode)
+							} else if (providerResponseData['error']['errorId'] == Consts.PAYPAL_ERROR_BAD_PINCODE) { //Probelem with parameter (guess PinCode)
 								console.log("Probelem with pincode");
 								response.error(failureResponce("Have you typed your pin correctly?", {
 									isFatalError: false
 								}));
-							} else { //Any Other Error
+							} 
+ 							else if (providerResponseData['error']['errorId'] == Consts.PAYPAL_ERROR_BAD_PREAPPROOVAL) { //Probelem with parameter (bad preaproval key)
+								console.log("Probelem with preaproval");
+								response.error(failureResponce("The preapproval key has been suspended,\nPlease reapprove PayPal payment", {
+									isFatalError: true
+								}));
+							} 
+
+							else { //Any Other Error
 								console.log("Failed to process payment: (" + providerResponseData['error']['errorId'] + ") " + providerResponseData);
 
 								updatePaymentAndPos(payment, 3, providerResponseData, "/providerError/" + encodeURIComponent(JSON.stringify({
